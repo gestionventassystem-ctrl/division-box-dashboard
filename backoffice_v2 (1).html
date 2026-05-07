@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>División Box — Backoffice Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   DIVISIÓN BOX — BACKOFFICE ADMIN v2.0
+   Aesthetic: Precision Finance Terminal · Vivid · Dense · Sharp
+   Fonts: Syne (display) · Space Grotesk (UI) · JetBrains Mono (data)
+================================================================ */
+:root {
+  --ink:    #050507;
+  --bg:     #0a0b0f;
+  --s1:     #0f1014;
+  --s2:     #15161c;
+  --s3:     #1c1e27;
+  --s4:     #242733;
+  --bdr:    #23263a;
+  --bdr2:   #30344a;
+  --red:    #ff1a2e;
+  --red2:   #ff5566;
+  --rdim:   rgba(255,26,46,.1);
+  --rdim2:  rgba(255,26,46,.18);
+  --grn:    #00ff88;
+  --gdim:   rgba(0,255,136,.08);
+  --gld:    #ffc72c;
+  --gdim2:  rgba(255,199,44,.1);
+  --blu:    #3d8eff;
+  --bdim:   rgba(61,142,255,.1);
+  --purp:   #b44dff;
+  --text:   #c8cce0;
+  --muted:  #4a4e68;
+  --cream:  #eeeae0;
+  --fD:  'Syne', sans-serif;
+  --fB:  'Space Grotesk', sans-serif;
+  --fM:  'JetBrains Mono', monospace;
+  --nav-h:  54px;
+  --side-w: 224px;
+  --r:      5px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fB);
+  font-size: 14px;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(255,26,46,.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(61,142,255,.03) 0%, transparent 50%);
+}
+::-webkit-scrollbar { width:3px; height:3px }
+::-webkit-scrollbar-thumb { background:var(--red); border-radius:2px }
+
+/* ══════════════════════════════════════════════════════════════
+   TOP NAV
+══════════════════════════════════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height: var(--nav-h);
+  background: rgba(5,5,7,.98);
+  border-bottom: 1px solid var(--bdr);
+  display:flex; align-items:center;
+  padding: 0 20px; gap:0;
+  backdrop-filter: blur(20px);
+}
+.nav-brand {
+  display:flex; align-items:center; gap:10px; margin-right:28px;
+}
+.nav-brand-name {
+  font-family: var(--fD); font-size:18px; font-weight:800;
+  letter-spacing:.08em; color:var(--cream); white-space:nowrap;
+}
+.nav-brand-name b { color:var(--red) }
+.nav-version {
+  font-family: var(--fM); font-size:9px; letter-spacing:.14em;
+  background: var(--rdim); border:1px solid rgba(255,26,46,.3);
+  color:var(--red); border-radius:2px; padding:2px 7px;
+}
+.nav-status {
+  display:flex; align-items:center; gap:8px;
+  font-family: var(--fM); font-size:10px; color:var(--muted);
+  margin-right:16px;
+}
+.nav-status .dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--grn); box-shadow:0 0 8px var(--grn);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-clock {
+  font-family: var(--fM); font-size:11px; color:var(--muted);
+  margin-right:16px; white-space:nowrap;
+}
+.nav-sep { flex:1 }
+.btn-sync {
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg,#cc0000,var(--red));
+  border:none; border-radius: var(--r); color:#fff;
+  font-family: var(--fB); font-size:12px; font-weight:700;
+  letter-spacing:.06em; padding:8px 16px; cursor:pointer;
+  box-shadow: 0 0 16px rgba(255,26,46,.35);
+  transition:all .15s; white-space:nowrap;
+}
+.btn-sync:hover { box-shadow:0 0 28px rgba(255,26,46,.6) }
+.btn-sync .spin { display:none; animation:rot .6s linear infinite }
+@keyframes rot { to{transform:rotate(360deg)} }
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════════════ */
+.sidebar {
+  position:fixed; top:var(--nav-h); left:0; bottom:0;
+  width: var(--side-w);
+  background: var(--s1);
+  border-right: 1px solid var(--bdr);
+  overflow-y:auto; z-index:50;
+  padding: 16px 0 40px;
+}
+
+.sb-sect { padding:0 10px; margin-bottom:8px }
+.sb-label {
+  display:block; padding:12px 8px 6px;
+  font-family: var(--fM); font-size:9px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted);
+}
+.sb-item {
+  display:flex; align-items:center; gap:9px;
+  padding:9px 10px; border-radius: var(--r);
+  font-family: var(--fB); font-size:13px; font-weight:500;
+  color:rgba(200,204,224,.5); cursor:pointer;
+  transition:all .15s; border:1px solid transparent;
+  user-select:none;
+}
+.sb-item:hover { background:var(--s2); color:var(--text) }
+.sb-item.active {
+  background: rgba(255,26,46,.08);
+  color:var(--cream);
+  border-color: rgba(255,26,46,.2);
+  box-shadow: inset 2px 0 0 var(--red);
+}
+.sb-item .si { font-size:15px; width:20px; text-align:center; flex-shrink:0 }
+.sb-badge {
+  margin-left:auto; font-family:var(--fM); font-size:9px;
+  padding:1px 6px; border-radius:10px;
+  background:var(--s4); color:var(--muted);
+}
+.sb-item.active .sb-badge { background:var(--rdim); color:var(--red) }
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════════════════════════ */
+.main {
+  margin-left: var(--side-w);
+  margin-top: var(--nav-h);
+  padding:24px;
+  min-height: calc(100vh - var(--nav-h));
+}
+
+/* ── Panel ── */
+.panel { display:none }
+.panel.active { display:block; animation:fadeIn .2s ease }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+.panel-hd {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:20px; flex-wrap:wrap; gap:12px;
+}
+.panel-title {
+  font-family:var(--fD); font-size:30px; font-weight:800;
+  letter-spacing:.03em; color:var(--cream); line-height:1;
+}
+.panel-title em { color:var(--red); font-style:normal }
+.panel-sub {
+  font-family:var(--fM); font-size:10px; letter-spacing:.06em;
+  color:var(--muted); margin-top:5px;
+}
+
+/* ── Section card ── */
+.sec-card {
+  background:var(--s1); border:1px solid var(--bdr);
+  border-radius: var(--r); overflow:hidden; margin-bottom:14px;
+}
+.sec-toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 16px; border-bottom:1px solid var(--bdr);
+  background:var(--s2); flex-wrap:wrap; gap:8px;
+}
+.sec-title {
+  font-family:var(--fB); font-size:12px; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--text);
+  display:flex; align-items:center; gap:8px;
+}
+.sec-title .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0 }
+.dot-red   { background:var(--red);  box-shadow:0 0 6px var(--red) }
+.dot-grn   { background:var(--grn);  box-shadow:0 0 6px var(--grn) }
+.dot-gld   { background:var(--gld);  box-shadow:0 0 6px var(--gld) }
+.dot-blu   { background:var(--blu);  box-shadow:0 0 6px var(--blu) }
+.dot-purp  { background:var(--purp); box-shadow:0 0 6px var(--purp) }
+
+/* ── Table ── */
+.tbl-wrap { overflow-x:auto }
+table { width:100%; border-collapse:collapse }
+thead th {
+  background:var(--s2); padding:9px 14px;
+  font-family:var(--fM); font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); text-align:left;
+  border-bottom:1px solid var(--bdr); white-space:nowrap;
+}
+tbody td {
+  padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.025);
+  font-size:13px; color:var(--text); vertical-align:middle;
+}
+tbody tr:last-child td { border-bottom:none }
+tbody tr:hover td { background:rgba(255,255,255,.018) }
+
+/* Editable input inside table */
+.ed {
+  font-family:var(--fM); font-size:12px;
+  background:transparent; border:1px solid transparent;
+  border-radius:3px; color:var(--text); padding:5px 8px;
+  width:100%; outline:none; transition:all .15s; cursor:pointer;
+  min-width:80px;
+}
+.ed:hover { border-color:var(--bdr2); background:var(--s3); cursor:text }
+.ed:focus { border-color:var(--red); background:var(--s3); box-shadow:0 0 0 2px rgba(255,26,46,.1) }
+.ed-select {
+  font-family:var(--fM); font-size:12px;
+  background:var(--s3); border:1px solid var(--bdr); border-radius:3px;
+  color:var(--text); padding:5px 8px; outline:none; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+}
+.ed-select:focus { border-color:var(--red) }
+
+/* ── Switch ── */
+.sw { position:relative; display:inline-block; width:36px; height:20px; flex-shrink:0 }
+.sw input { opacity:0; width:0; height:0 }
+.sw-track {
+  position:absolute; inset:0; background:var(--s4); border-radius:20px;
+  cursor:pointer; transition:background .2s;
+}
+.sw input:checked + .sw-track { background:var(--grn) }
+.sw-track::before {
+  content:''; position:absolute; width:14px; height:14px;
+  left:3px; top:3px; background:#fff; border-radius:50%;
+  transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.4);
+}
+.sw input:checked + .sw-track::before { transform:translateX(16px) }
+
+/* ── Tags ── */
+.tag {
+  display:inline-block; border-radius:2px;
+  font-family:var(--fM); font-size:9px; letter-spacing:.06em; padding:2px 8px; white-space:nowrap;
+}
+.t-red  { background:var(--rdim);  color:var(--red);  border:1px solid rgba(255,26,46,.25) }
+.t-grn  { background:var(--gdim);  color:var(--grn);  border:1px solid rgba(0,255,136,.2) }
+.t-gld  { background:var(--gdim2); color:var(--gld);  border:1px solid rgba(255,199,44,.2) }
+.t-blu  { background:var(--bdim);  color:var(--blu);  border:1px solid rgba(61,142,255,.2) }
+.t-gray { background:var(--s3);    color:var(--muted);border:1px solid var(--bdr) }
+
+/* ── Buttons ── */
+.btn {
+  display:inline-flex; align-items:center; gap:5px;
+  border-radius:var(--r); font-family:var(--fB); font-size:12px; font-weight:600;
+  padding:7px 14px; cursor:pointer; border:none; transition:all .15s; letter-spacing:.04em;
+}
+.btn-red { background:var(--red); color:#fff; box-shadow:0 0 12px rgba(255,26,46,.3) }
+.btn-red:hover { box-shadow:0 0 22px rgba(255,26,46,.6) }
+.btn-ghost { background:var(--s3); color:var(--text); border:1px solid var(--bdr) }
+.btn-ghost:hover { border-color:var(--bdr2) }
+.btn-danger { background:transparent; color:var(--red); border:1px solid rgba(255,26,46,.3); padding:5px 10px; font-size:11px }
+.btn-danger:hover { background:var(--rdim) }
+.btn-sm { padding:5px 10px; font-size:11px }
+.btn-icon { width:30px; height:30px; padding:0; justify-content:center; font-size:14px }
+
+/* ── Forms ── */
+.fg { display:flex; flex-direction:column; gap:5px; margin-bottom:14px }
+.fl { font-family:var(--fM); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+.fc {
+  background:var(--s2); border:1px solid var(--bdr); border-radius:var(--r);
+  color:var(--text); font-family:var(--fB); font-size:13px;
+  padding:10px 12px; outline:none; transition:border-color .15s;
+  -webkit-appearance:none; appearance:none;
+}
+.fc:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(255,26,46,.1) }
+.fc::placeholder { color:var(--muted) }
+select.fc {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%234a4e68' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; padding-right:30px;
+}
+.form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px }
+
+/* ── KPI mini cards ── */
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:16px }
+.kpi-mini {
+  background:var(--s1); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:16px; position:relative; overflow:hidden;
+}
+.kpi-mini::before { content:''; position:absolute; top:0; left:0; right:0; height:2px }
+.kpi-mini.red::before   { background:var(--red);  box-shadow:0 2px 10px var(--red) }
+.kpi-mini.green::before { background:var(--grn);  box-shadow:0 2px 10px var(--grn) }
+.kpi-mini.gold::before  { background:var(--gld);  box-shadow:0 2px 10px var(--gld) }
+.kpi-mini.blue::before  { background:var(--blu);  box-shadow:0 2px 10px var(--blu) }
+.kpi-lbl { font-family:var(--fM); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px }
+.kpi-val { font-family:var(--fM); font-size:24px; font-weight:500; color:var(--cream); line-height:1 }
+.kpi-sub { font-family:var(--fM); font-size:10px; color:var(--muted); margin-top:4px }
+
+/* ── Callout ── */
+.callout {
+  border-radius:var(--r); padding:12px 16px; margin-bottom:16px;
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:13px; line-height:1.6;
+}
+.callout.info  { background:rgba(61,142,255,.06); border:1px solid rgba(61,142,255,.2); color:rgba(200,204,224,.75) }
+.callout.warn  { background:var(--gdim2); border:1px solid rgba(255,199,44,.25); color:rgba(200,204,224,.8) }
+.callout.ok    { background:var(--gdim);  border:1px solid rgba(0,255,136,.2); color:rgba(200,204,224,.8) }
+
+/* ── Modal ── */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:200;
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.overlay.open { display:flex; animation:fadeIn .2s ease }
+.modal {
+  background:var(--s1); border:1px solid var(--bdr2);
+  border-radius:6px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+  animation:slideUp .25s cubic-bezier(.16,1,.3,1);
+}
+@keyframes slideUp { from{transform:translateY(14px);opacity:0} to{transform:none;opacity:1} }
+.modal-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border-bottom:1px solid var(--bdr);
+  position:sticky; top:0; background:var(--s1); z-index:1;
+}
+.modal-title { font-family:var(--fD); font-size:20px; font-weight:800; color:var(--cream) }
+.modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; transition:color .15s }
+.modal-close:hover { color:var(--text) }
+.modal-body { padding:20px }
+.modal-foot { padding:14px 20px; border-top:1px solid var(--bdr); display:flex; gap:8px; justify-content:flex-end }
+
+/* ── Toast ── */
+#toast {
+  position:fixed; bottom:20px; right:20px; z-index:400;
+  background:var(--s2); border:1px solid var(--bdr2);
+  border-left:3px solid var(--grn); border-radius:var(--r);
+  padding:11px 18px; font-family:var(--fB); font-size:13px; color:var(--text);
+  max-width:320px; transform:translateX(120%); transition:transform .3s cubic-bezier(.16,1,.3,1);
+}
+#toast.show { transform:none }
+#toast.err  { border-left-color:var(--red) }
+
+.empty { padding:32px; text-align:center; font-family:var(--fM); font-size:11px; color:var(--muted) }
+
+/* ── API config panel ── */
+.api-status {
+  display:flex; align-items:center; gap:10px;
+  background:var(--s2); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:12px 16px; margin-bottom:16px;
+  font-family:var(--fM); font-size:11px; color:var(--muted);
+}
+.api-status .indicator {
+  width:10px; height:10px; border-radius:50%; flex-shrink:0;
+  background:var(--muted);
+}
+.api-status.connected .indicator {
+  background:var(--grn); box-shadow:0 0 8px var(--grn);
+  animation:pulse 2s infinite;
+}
+.api-status.error .indicator { background:var(--red); box-shadow:0 0 8px var(--red) }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ═══════════════════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-brand-name">DIVISIÓN <b>BOX</b></div>
+    <span class="nav-version">BACKOFFICE v2</span>
+  </div>
+  <div class="nav-status"><span class="dot"></span>Sheets conectado</div>
+  <div class="nav-clock" id="clock"></div>
+  <div class="nav-sep"></div>
+  <button class="btn-sync" id="btn-sync" onclick="syncAll()">
+    <span id="sync-icon">☁</span>
+    <span class="spin" id="sync-spin">↻</span>
+    Sincronizar con Sheets
+  </button>
+</nav>
+
+<!-- ══ SIDEBAR ════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-sect">
+    <span class="sb-label">Catálogo</span>
+    <div class="sb-item active" id="nav-productos" onclick="show('productos')">
+      <span class="si">📦</span>Productos
+      <span class="sb-badge" id="bdg-productos">0</span>
+    </div>
+    <div class="sb-item" id="nav-precios" onclick="show('precios')">
+      <span class="si">💰</span>Precios & Promos
+    </div>
+    <div class="sb-item" id="nav-categorias" onclick="show('categorias')">
+      <span class="si">🏷</span>Categorías
+      <span class="sb-badge" id="bdg-categorias">0</span>
+    </div>
+  </div>
+  <div class="sb-sect">
+    <span class="sb-label">Equipo</span>
+    <div class="sb-item" id="nav-vendedores" onclick="show('vendedores')">
+      <span class="si">👤</span>Vendedores
+      <span class="sb-badge" id="bdg-vendedores">0</span>
+    </div>
+    <div class="sb-item" id="nav-comisiones" onclick="show('comisiones')">
+      <span class="si">💸</span>Comisiones
+    </div>
+    <div class="sb-item" id="nav-socios" onclick="show('socios')">
+      <span class="si">🤝</span>Socios & Desc.
+      <span class="sb-badge" id="bdg-socios">0</span>
+    </div>
+  </div>
+  <div class="sb-sect">
+    <span class="sb-label">Operación</span>
+    <div class="sb-item" id="nav-sedes" onclick="show('sedes')">
+      <span class="si">📍</span>Sedes
+      <span class="sb-badge" id="bdg-sedes">0</span>
+    </div>
+    <div class="sb-item" id="nav-regalias" onclick="show('regalias')">
+      <span class="si">🎁</span>Regalías & Especiales
+    </div>
+  </div>
+  <div class="sb-sect">
+    <span class="sb-label">Sistema</span>
+    <div class="sb-item" id="nav-config" onclick="show('config')">
+      <span class="si">🔌</span>Config API
+    </div>
+    <div class="sb-item" id="nav-log" onclick="show('log')">
+      <span class="si">📋</span>Log cambios
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ═══════════════════════════════════════════════════════ -->
+<main class="main">
+
+<!-- ═══ PRODUCTOS ═══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-productos">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">PRODUCTOS</div>
+      <div class="panel-sub">Catálogo maestro · Edición inline · Cambios visibles en Registro de Venta</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-prod')">+ Producto</button>
+  </div>
+  <div class="callout info">
+    <span>ℹ️</span>
+    Haz clic en cualquier celda para editar. Los precios actualizados aparecen inmediatamente en el Registro de Venta.
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar">
+      <div class="sec-title"><span class="dot dot-red"></span>Catálogo</div>
+      <input type="text" class="fc btn-sm" placeholder="Buscar producto..." oninput="filterTbl('tbl-prod',this.value)" style="min-width:180px">
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl-prod">
+        <thead><tr>
+          <th>SKU</th><th>Nombre</th><th>Categoría</th>
+          <th>Precio unit.</th><th>Costo</th><th>Margen</th>
+          <th>Pack6</th><th>Pack36</th><th>Activo</th><th></th>
+        </tr></thead>
+        <tbody id="tb-prod"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRECIOS & PROMOS ════════════════════════════════════════ -->
+<div class="panel" id="panel-precios">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">PRECIOS <em>&</em> PROMOS</div>
+      <div class="panel-sub">Edición dinámica · Afecta ventas futuras · Histórico conserva precio original</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-promo')">+ Promoción</button>
+  </div>
+  <div class="callout warn">
+    <span>⚠️</span>
+    Los cambios de precio afectan ventas futuras únicamente. Los registros históricos conservan el precio de la transacción.
+  </div>
+  <div class="sec-card" style="margin-bottom:14px">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-gld"></span>Precios unitarios</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-precios">
+        <thead><tr><th>Producto</th><th>Categoría</th><th>Precio venta</th><th>Costo</th><th>Margen $</th><th>Margen %</th><th>Actualizado</th></tr></thead>
+        <tbody id="tb-precios"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-grn"></span>Promociones (packs)</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-promos">
+        <thead><tr><th>Nombre</th><th>Producto</th><th>Qty mín.</th><th>Precio pack</th><th>Descuento</th><th>Activo</th><th></th></tr></thead>
+        <tbody id="tb-promos"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VENDEDORES ══════════════════════════════════════════════ -->
+<div class="panel" id="panel-vendedores">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">VENDEDORES</div>
+      <div class="panel-sub">Nómina operativa · Vinculación dispositivo automática vía localStorage</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-vend')">+ Vendedor</button>
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-blu"></span>Nómina activa</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-vend">
+        <thead><tr><th>Nombre</th><th>Sede principal</th><th>Dispositivo</th><th>Ventas mes</th><th>Activo</th><th></th></tr></thead>
+        <tbody id="tb-vend"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMISIONES ══════════════════════════════════════════════ -->
+<div class="panel" id="panel-comisiones">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">COMISIONES</div>
+      <div class="panel-sub">Reglas de incentivo · Calculadas automáticamente en panel Incentivos</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-com')">+ Regla</button>
+  </div>
+  <div class="kpi-row" id="kpi-com"></div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-purp"></span>Reglas activas</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-com">
+        <thead><tr><th>Vendedor</th><th>Tipo</th><th>Aplica a</th><th>Valor</th><th>Activo</th><th></th></tr></thead>
+        <tbody id="tb-com"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOCIOS ══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-socios">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">SOCIOS <em>&</em> DESCUENTOS</div>
+      <div class="panel-sub">Precios especiales · Banco registrado · Aparecen en botón "Precio Socio"</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-socio')">+ Socio</button>
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-gld"></span>Socios registrados</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-socios">
+        <thead><tr><th>ID</th><th>Nombre</th><th>Banco / Cuenta</th><th>Desc. %</th><th>Aplica a</th><th>Válido hasta</th><th>Activo</th><th></th></tr></thead>
+        <tbody id="tb-socios"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CATEGORÍAS ══════════════════════════════════════════════ -->
+<div class="panel" id="panel-categorias">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">CATEGORÍAS</div>
+      <div class="panel-sub">Líneas de negocio · Visible en el Registro de Venta</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-cat')">+ Categoría</button>
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-red"></span>Categorías de negocio</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-cats">
+        <thead><tr><th>ID</th><th>Nombre</th><th>Ícono</th><th>Color</th><th>Productos</th><th>Visible app</th><th></th></tr></thead>
+        <tbody id="tb-cats"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SEDES ════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-sedes">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">SEDES</div>
+      <div class="panel-sub">Ubicaciones · Capacidad visicoolers · Stock mínimo</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-sede')">+ Sede</button>
+  </div>
+  <div class="sec-card">
+    <div class="sec-toolbar"><div class="sec-title"><span class="dot dot-grn"></span>Sedes activas</div></div>
+    <div class="tbl-wrap">
+      <table id="tbl-sedes">
+        <thead><tr><th>Nombre</th><th>Dirección</th><th>Cap. SUERO</th><th>Cap. JUGO</th><th>Stock mín.</th><th>Vendedor</th><th>Activo</th><th></th></tr></thead>
+        <tbody id="tb-sedes"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REGALÍAS ════════════════════════════════════════════════ -->
+<div class="panel" id="panel-regalias">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">REGALÍAS <em>&</em> ESPECIALES</div>
+      <div class="panel-sub">Valorizado a precio costo · No impacta ingresos reales</div>
+    </div>
+    <button class="btn btn-red" onclick="openModal('m-add-reg')">+ Registrar</button>
+  </div>
+  <div class="callout warn"><span>⚠️</span>Estos registros reflejan correctamente la rentabilidad sin distorsionar las métricas de venta.</div>
+  <div class="kpi-row" id="kpi-reg"></div>
+  <div class="sec-card">
+    <div class="sec-toolbar">
+      <div class="sec-title"><span class="dot dot-gld"></span>Historial</div>
+      <select class="fc btn-sm" onchange="filterReg(this.value)">
+        <option value="">Todos los tipos</option>
+        <option value="regalo">Regalía</option>
+        <option value="perdida">Pérdida</option>
+        <option value="sorteo">Sorteo</option>
+      </select>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl-reg">
+        <thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Qty</th><th>Costo</th><th>Vendedor</th><th>Sede</th><th>Motivo</th><th>TXN ID</th></tr></thead>
+        <tbody id="tb-reg"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONFIG API ═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-config">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">CONFIG <em>API</em></div>
+      <div class="panel-sub">Conexión con Google Sheets · Apps Script · Credenciales</div>
+    </div>
+  </div>
+  <div class="api-status" id="api-status-bar">
+    <span class="indicator"></span>
+    <span id="api-status-txt">Sin configurar</span>
+  </div>
+  <div style="max-width:600px">
+    <div class="fg">
+      <label class="fl">URL Apps Script Web App *</label>
+      <input class="fc" id="cfg-url" type="text" placeholder="https://script.google.com/macros/s/.../exec">
+      <div style="font-family:var(--fM);font-size:10px;color:var(--muted);margin-top:4px">
+        Se guarda en localStorage del navegador. Los demás módulos la leen automáticamente.
+      </div>
+    </div>
+    <div class="form-grid" style="margin-bottom:16px">
+      <div class="fg">
+        <label class="fl">Modo</label>
+        <select class="fc" id="cfg-mode">
+          <option value="production">Producción</option>
+          <option value="demo">Demo (datos locales)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">PIN de Admin (opcional)</label>
+        <input class="fc" id="cfg-pin" type="password" maxlength="6" placeholder="••••••">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-red" onclick="saveConfig()">Guardar configuración</button>
+      <button class="btn btn-ghost" onclick="testConn()">🔗 Probar conexión</button>
+    </div>
+    <div class="callout ok" id="conn-ok" style="margin-top:16px;display:none">
+      <span>✅</span><span id="conn-msg">Conectado correctamente</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOG ══════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-log">
+  <div class="panel-hd">
+    <div>
+      <div class="panel-title">LOG <em>DE CAMBIOS</em></div>
+      <div class="panel-sub">Auditoría de modificaciones · Solo sesión actual</div>
+    </div>
+    <button class="btn btn-ghost" onclick="clearLog()">Limpiar</button>
+  </div>
+  <div class="sec-card">
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Hora</th><th>Módulo</th><th>Acción</th><th>Campo</th><th>Antes</th><th>Después</th></tr></thead>
+        <tbody id="tb-log"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+
+<!-- ══ MODALS ══════════════════════════════════════════════════════ -->
+
+<!-- Add Producto -->
+<div class="overlay" id="m-add-prod">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nuevo Producto</span><button class="modal-close" onclick="closeModal('m-add-prod')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">SKU *</span><input class="fc" id="np-sku" placeholder="SUERO"></div>
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="np-nom" placeholder="Suero Frambuesa"></div>
+        <div class="fg"><span class="fl">Categoría *</span><select class="fc" id="np-cat"><option value="">—</option></select></div>
+        <div class="fg"><span class="fl">Precio venta *</span><input class="fc" id="np-precio" type="number" placeholder="2000"></div>
+        <div class="fg"><span class="fl">Costo *</span><input class="fc" id="np-costo" type="number" placeholder="950"></div>
+        <div class="fg"><span class="fl">Pack6 ($)</span><input class="fc" id="np-p6" type="number" placeholder="9900"></div>
+        <div class="fg"><span class="fl">Pack36 ($)</span><input class="fc" id="np-p36" type="number" placeholder="56430"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-prod')">Cancelar</button><button class="btn btn-red" onclick="addProducto()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Promo -->
+<div class="overlay" id="m-add-promo">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nueva Promoción</span><button class="modal-close" onclick="closeModal('m-add-promo')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="npr-nom" placeholder="Pack6 Suero"></div>
+        <div class="fg"><span class="fl">Producto *</span><select class="fc" id="npr-prod"><option value="">—</option></select></div>
+        <div class="fg"><span class="fl">Cantidad mín. *</span><input class="fc" id="npr-qty" type="number" placeholder="6"></div>
+        <div class="fg"><span class="fl">Precio pack *</span><input class="fc" id="npr-precio" type="number" placeholder="9900"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-promo')">Cancelar</button><button class="btn btn-red" onclick="addPromo()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Vendedor -->
+<div class="overlay" id="m-add-vend">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nuevo Vendedor</span><button class="modal-close" onclick="closeModal('m-add-vend')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="nv-nom" placeholder="Angelo Alvarez"></div>
+        <div class="fg"><span class="fl">Sede principal</span><select class="fc" id="nv-sede"><option value="">—</option></select></div>
+        <div class="fg" style="grid-column:1/-1">
+          <span class="fl">Nota de dispositivo</span>
+          <input class="fc" id="nv-dev" placeholder="Ej: iPhone de Tito (se autodetecta en el celular)">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-vend')">Cancelar</button><button class="btn btn-red" onclick="addVendedor()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Socio -->
+<div class="overlay" id="m-add-socio">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nuevo Socio</span><button class="modal-close" onclick="closeModal('m-add-socio')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="ns-nom" placeholder="Carlos Rodríguez"></div>
+        <div class="fg"><span class="fl">Banco / Cuenta *</span><input class="fc" id="ns-banco" placeholder="Banco Estado ···4521"></div>
+        <div class="fg"><span class="fl">Descuento % *</span><input class="fc" id="ns-desc" type="number" min="1" max="100" placeholder="15"></div>
+        <div class="fg"><span class="fl">Categorías</span><select class="fc" id="ns-cat"><option value="all">Todas</option></select></div>
+        <div class="fg"><span class="fl">Válido hasta</span><input class="fc" id="ns-hasta" type="date"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-socio')">Cancelar</button><button class="btn btn-red" onclick="addSocio()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Categoría -->
+<div class="overlay" id="m-add-cat">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nueva Categoría</span><button class="modal-close" onclick="closeModal('m-add-cat')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">ID (slug) *</span><input class="fc" id="nc-id" placeholder="ambrosia" style="text-transform:lowercase"></div>
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="nc-nom" placeholder="Ambrosia"></div>
+        <div class="fg"><span class="fl">Ícono (emoji)</span><input class="fc" id="nc-icon" placeholder="💧" maxlength="2"></div>
+        <div class="fg"><span class="fl">Color</span><input class="fc" id="nc-color" type="color" value="#2979ff" style="height:42px;padding:4px"></div>
+        <div class="fg"><span class="fl">Subtítulo</span><input class="fc" id="nc-sub" placeholder="Hidratación & Sueros"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-cat')">Cancelar</button><button class="btn btn-red" onclick="addCat()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Sede -->
+<div class="overlay" id="m-add-sede">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nueva Sede</span><button class="modal-close" onclick="closeModal('m-add-sede')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Nombre *</span><input class="fc" id="nsede-nom" placeholder="San Miguel"></div>
+        <div class="fg"><span class="fl">Dirección</span><input class="fc" id="nsede-dir" placeholder="Av. Principal 1234"></div>
+        <div class="fg"><span class="fl">Cap. SUERO</span><input class="fc" id="nsede-cs" type="number" placeholder="90"></div>
+        <div class="fg"><span class="fl">Cap. JUGO</span><input class="fc" id="nsede-cj" type="number" placeholder="90"></div>
+        <div class="fg"><span class="fl">Stock mín. alerta</span><input class="fc" id="nsede-min" type="number" placeholder="20"></div>
+        <div class="fg"><span class="fl">Vendedor asignado</span><select class="fc" id="nsede-vend"><option value="">—</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-sede')">Cancelar</button><button class="btn btn-red" onclick="addSede()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Comisión -->
+<div class="overlay" id="m-add-com">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Nueva Regla de Comisión</span><button class="modal-close" onclick="closeModal('m-add-com')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Vendedor</span><select class="fc" id="nc-vend"><option value="todos">Todos</option></select></div>
+        <div class="fg"><span class="fl">Tipo *</span>
+          <select class="fc" id="nc-tipo">
+            <option value="porcentaje">% sobre ventas</option>
+            <option value="fijo_unidad">$ por unidad</option>
+            <option value="bono_meta">Bono por meta</option>
+          </select></div>
+        <div class="fg"><span class="fl">Aplica a</span>
+          <select class="fc" id="nc-aplica">
+            <option value="todo">Todas las ventas</option>
+            <option value="pack36">Solo Pack36</option>
+            <option value="pack6">Solo Pack6</option>
+          </select></div>
+        <div class="fg"><span class="fl">Valor ($ o %)</span><input class="fc" id="nc-val" type="number" placeholder="5"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-com')">Cancelar</button><button class="btn btn-red" onclick="addCom()">Agregar</button></div>
+  </div>
+</div>
+
+<!-- Add Regalía -->
+<div class="overlay" id="m-add-reg">
+  <div class="modal">
+    <div class="modal-head"><span class="modal-title">Registrar Regalía / Pérdida / Sorteo</span><button class="modal-close" onclick="closeModal('m-add-reg')">✕</button></div>
+    <div class="modal-body">
+      <div class="callout warn" style="margin-bottom:14px"><span>💡</span>Se valoriza a precio costo. No impacta ingresos reales del negocio.</div>
+      <div class="form-grid">
+        <div class="fg"><span class="fl">Tipo *</span>
+          <select class="fc" id="nr-tipo">
+            <option value="regalo">Regalía a vendedor</option>
+            <option value="perdida">Pérdida</option>
+            <option value="sorteo">Sorteo</option>
+          </select></div>
+        <div class="fg"><span class="fl">Sede *</span><select class="fc" id="nr-sede"><option value="">—</option></select></div>
+        <div class="fg"><span class="fl">Vendedor</span><select class="fc" id="nr-vend"><option value="Admin">Admin</option></select></div>
+        <div class="fg"><span class="fl">Producto *</span><select class="fc" id="nr-prod"><option value="">—</option></select></div>
+        <div class="fg"><span class="fl">Cantidad *</span><input class="fc" id="nr-qty" type="number" min="1" value="1"></div>
+        <div class="fg"><span class="fl">Motivo</span><input class="fc" id="nr-motivo" placeholder="Cumpleaños, merma..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-add-reg')">Cancelar</button><button class="btn btn-red" onclick="addRegalia()">Registrar</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+
+<script>
+/* ================================================================
+   DIVISIÓN BOX — BACKOFFICE ENGINE v2.0
+   Persistencia: localStorage + sync opcional con Sheets API
+   Arquitectura: DATA en memoria → persist() → syncAll() → API
+================================================================ */
+
+// ── CONFIG ────────────────────────────────────────────────────
+let API_URL = localStorage.getItem('db_api_url') || '';
+const STORE  = 'db_backoffice_v2';
+
+// ── SEED DATA (operativos reales División Box) ─────────────────
+const SEED = {
+  categorias: [
+    { id:'ambrosia', nombre:'Ambrosia',       icon:'💧', color:'#2979ff', sub:'Hidratación & Sueros', visible:1 },
+    { id:'store',    nombre:'División Store',  icon:'👕', color:'#cc0000', sub:'Ropa & Accesorios',    visible:1 },
+    { id:'eventos',  nombre:'Eventos',         icon:'🥊', color:'#ff6d00', sub:'Veladas & Competencias',visible:1 },
+    { id:'planes',   nombre:'Planes Box',      icon:'📋', color:'#9c27b0', sub:'Box & Crossfit',       visible:1 },
+  ],
+  productos: [
+    { sku:'SUERO',    nombre:'Suero (todos sabores)', cat:'ambrosia', precio:2000,  costo:950,   p6:9900,   p36:56430, activo:1 },
+    { sku:'JUGO',     nombre:'Jugo (todos sabores)',  cat:'ambrosia', precio:1900,  costo:900,   p6:8100,   p36:46152, activo:1 },
+    { sku:'POLERA',   nombre:'Polera División Box',   cat:'store',    precio:15000, costo:6000,  p6:null,   p36:null,  activo:1 },
+    { sku:'GUANTES',  nombre:'Guantes de Boxeo',      cat:'store',    precio:25000, costo:10000, p6:null,   p36:null,  activo:1 },
+    { sku:'PLAN_MES', nombre:'Plan Mensual Box',      cat:'planes',   precio:35000, costo:0,     p6:null,   p36:null,  activo:1 },
+    { sku:'ENT_GEN',  nombre:'Entrada General',       cat:'eventos',  precio:5000,  costo:0,     p6:null,   p36:null,  activo:1 },
+  ],
+  vendedores: [
+    { nombre:'Angelo Alvarez', sede:'San Miguel',  device:'', activo:1 },
+    { nombre:'Karen',          sede:'La Cisterna', device:'', activo:1 },
+    { nombre:'Xoly',           sede:'La Cisterna', device:'', activo:1 },
+    { nombre:'Tito',           sede:'San Miguel',  device:'', activo:1 },
+  ],
+  sedes: [
+    { nombre:'San Miguel',  dir:'', cap_s:90, cap_j:90, min_alerta:20, vendedor:'Tito',  activo:1 },
+    { nombre:'La Cisterna', dir:'', cap_s:90, cap_j:90, min_alerta:20, vendedor:'Karen', activo:1 },
+    { nombre:'Externo',     dir:'', cap_s:0,  cap_j:0,  min_alerta:0,  vendedor:'',      activo:1 },
+  ],
+  socios: [
+    { id:'S001', nombre:'Carlos Rodríguez', banco:'Banco Estado ···4521', desc:15, cats:'all', hasta:'2025-12-31', activo:1 },
+    { id:'S002', nombre:'María González',   banco:'Santander ···8832',    desc:20, cats:'all', hasta:'2025-12-31', activo:1 },
+    { id:'S003', nombre:'Roberto Fuentes',  banco:'BCI ···1190',          desc:10, cats:'all', hasta:'2025-12-31', activo:1 },
+  ],
+  comisiones: [
+    { vendedor:'Todos',         tipo:'porcentaje', aplica:'todo',   valor:5,    activo:1 },
+    { vendedor:'Angelo Alvarez',tipo:'bono_meta',  aplica:'pack36', valor:1000, activo:1 },
+  ],
+  promos: [
+    { nombre:'Pack6 Suero',  prod:'SUERO', qty_min:6,  precio:9900,  activo:1 },
+    { nombre:'Pack36 Suero', prod:'SUERO', qty_min:36, precio:56430, activo:1 },
+    { nombre:'Pack6 Jugo',   prod:'JUGO',  qty_min:6,  precio:8100,  activo:1 },
+    { nombre:'Pack36 Jugo',  prod:'JUGO',  qty_min:36, precio:46152, activo:1 },
+  ],
+  regalias: [],
+  log: [],
+};
+
+let D = {};
+
+// ── INIT ──────────────────────────────────────────────────────
+function init() {
+  const stored = localStorage.getItem(STORE);
+  D = stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(SEED));
+  // Ensure all keys
+  Object.keys(SEED).forEach(k => { if (!D[k]) D[k] = JSON.parse(JSON.stringify(SEED[k])); });
+  API_URL = localStorage.getItem('db_api_url') || '';
+  document.getElementById('cfg-url').value = API_URL;
+  updateApiStatus();
+  renderAll();
+  startClock();
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); syncAll(); }
+    if (e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+  });
+}
+
+function persist() { localStorage.setItem(STORE, JSON.stringify(D)); }
+
+function renderAll() {
+  renderProductos(); renderPrecios(); renderVendedores();
+  renderSedes(); renderSocios(); renderComisiones();
+  renderCats(); renderRegalias(); renderLog();
+  updateBadges();
+}
+
+// ── CLOCK ─────────────────────────────────────────────────────
+function startClock() {
+  const upd = () => document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  upd(); setInterval(upd, 1000);
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+}
+
+// ── BADGES ────────────────────────────────────────────────────
+function updateBadges() {
+  const m = {productos:D.productos.length, categorias:D.categorias.length,
+             vendedores:D.vendedores.length, socios:D.socios.length, sedes:D.sedes.length};
+  Object.entries(m).forEach(([k,v]) => {
+    const el = document.getElementById('bdg-'+k);
+    if (el) el.textContent = v;
+  });
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+const fmt = n => n!=null ? '$'+Number(n).toLocaleString('es-CL') : '—';
+const pct = (a,b) => b>0 ? ((a/b)*100).toFixed(1)+'%' : '—';
+const emptyRow = (cols, msg='Sin registros') =>
+  `<tr><td colspan="${cols}" class="empty">${msg}</td></tr>`;
+const g = id => document.getElementById(id);
+
+// ── EDIT FIELD ────────────────────────────────────────────────
+function editField(col, idx, field, val) {
+  const old = D[col][idx][field];
+  D[col][idx][field] = val;
+  addLog(col, 'edit', field, old, val);
+  persist();
+  updateBadges();
+  // Live re-render for price-related changes
+  if (['precio','costo','p6','p36'].includes(field)) renderPrecios();
+}
+
+function deleteRow(col, idx) {
+  const item = D[col][idx];
+  const name = item.nombre||item.sku||item.id||String(idx);
+  if (!confirm('¿Eliminar "'+name+'"?')) return;
+  addLog(col,'delete','row',name,null);
+  D[col].splice(idx,1);
+  persist(); renderAll();
+  toast('✓ Eliminado: '+name);
+}
+
+// ── RENDERS ───────────────────────────────────────────────────
+function renderProductos() {
+  const tb = g('tb-prod');
+  tb.innerHTML = D.productos.map((p,i) => {
+    const margen = (p.precio||0) - (p.costo||0);
+    const cat = D.categorias.find(c=>c.id===p.cat);
+    return `<tr>
+      <td><span class="tag t-gray">${p.sku}</span></td>
+      <td><input class="ed" value="${p.nombre}" onchange="editField('productos',${i},'nombre',this.value)"></td>
+      <td>${cat?`<span style="color:${cat.color}">${cat.icon} ${cat.nombre}</span>`:p.cat}</td>
+      <td><input class="ed" type="number" value="${p.precio}" style="max-width:90px" onchange="editField('productos',${i},'precio',+this.value)"></td>
+      <td><input class="ed" type="number" value="${p.costo}"  style="max-width:90px" onchange="editField('productos',${i},'costo',+this.value)"></td>
+      <td><span class="tag ${margen>0?'t-grn':'t-red'}">${fmt(margen)} (${pct(margen,p.precio)})</span></td>
+      <td><input class="ed" type="number" value="${p.p6||''}"  placeholder="—" style="max-width:90px" onchange="editField('productos',${i},'p6',+this.value||null)"></td>
+      <td><input class="ed" type="number" value="${p.p36||''}" placeholder="—" style="max-width:90px" onchange="editField('productos',${i},'p36',+this.value||null)"></td>
+      <td><label class="sw"><input type="checkbox" ${p.activo?'checked':''} onchange="editField('productos',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+      <td><button class="btn btn-danger" onclick="deleteRow('productos',${i})">✕</button></td>
+    </tr>`;
+  }).join('') || emptyRow(10,'Sin productos — agrega uno →');
+}
+
+function renderPrecios() {
+  // Prices table
+  g('tb-precios').innerHTML = D.productos.map((p,i) => {
+    const m = (p.precio||0) - (p.costo||0);
+    const cat = D.categorias.find(c=>c.id===p.cat);
+    return `<tr>
+      <td><strong style="color:var(--cream)">${p.nombre}</strong></td>
+      <td>${cat?cat.nombre:p.cat}</td>
+      <td><input class="ed" type="number" value="${p.precio}" onchange="editField('productos',${i},'precio',+this.value);renderPrecios()"></td>
+      <td><input class="ed" type="number" value="${p.costo}"  onchange="editField('productos',${i},'costo',+this.value);renderPrecios()"></td>
+      <td><span class="tag t-grn">${fmt(m)}</span></td>
+      <td><strong style="color:var(--grn)">${pct(m,p.precio)}</strong></td>
+      <td style="color:var(--muted);font-family:var(--fM);font-size:11px">${new Date().toLocaleDateString('es-CL')}</td>
+    </tr>`;
+  }).join('') || emptyRow(7);
+  // Promos table
+  g('tb-promos').innerHTML = D.promos.map((p,i) => {
+    const prod = D.productos.find(x=>x.sku===p.prod);
+    const disc = prod ? (((prod.precio*p.qty_min - p.precio)/(prod.precio*p.qty_min))*100).toFixed(1) : '—';
+    return `<tr>
+      <td>${p.nombre}</td>
+      <td><span class="tag t-blu">${p.prod}</span></td>
+      <td><input class="ed" type="number" value="${p.qty_min}" style="max-width:70px" onchange="editField('promos',${i},'qty_min',+this.value)"></td>
+      <td><input class="ed" type="number" value="${p.precio}" style="max-width:90px" onchange="editField('promos',${i},'precio',+this.value);renderPrecios()"></td>
+      <td><span class="tag t-gld">${disc}% off</span></td>
+      <td><label class="sw"><input type="checkbox" ${p.activo?'checked':''} onchange="editField('promos',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+      <td><button class="btn btn-danger" onclick="deleteRow('promos',${i})">✕</button></td>
+    </tr>`;
+  }).join('') || emptyRow(7);
+}
+
+function renderVendedores() {
+  g('tb-vend').innerHTML = D.vendedores.map((v,i) => `<tr>
+    <td><input class="ed" value="${v.nombre}" onchange="editField('vendedores',${i},'nombre',this.value)"></td>
+    <td><select class="ed-select" onchange="editField('vendedores',${i},'sede',this.value)">
+      ${D.sedes.map(s=>`<option ${v.sede===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}
+    </select></td>
+    <td><input class="ed" value="${v.device||''}" placeholder="Auto-detectado" onchange="editField('vendedores',${i},'device',this.value)"></td>
+    <td style="color:var(--muted);font-family:var(--fM);font-size:11px">— (ver Dashboard)</td>
+    <td><label class="sw"><input type="checkbox" ${v.activo?'checked':''} onchange="editField('vendedores',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+    <td><button class="btn btn-danger" onclick="deleteRow('vendedores',${i})">✕</button></td>
+  </tr>`).join('') || emptyRow(6);
+}
+
+function renderSedes() {
+  g('tb-sedes').innerHTML = D.sedes.map((s,i) => `<tr>
+    <td><input class="ed" value="${s.nombre}" onchange="editField('sedes',${i},'nombre',this.value)"></td>
+    <td><input class="ed" value="${s.dir||''}" placeholder="—" onchange="editField('sedes',${i},'dir',this.value)"></td>
+    <td><input class="ed" type="number" value="${s.cap_s}" style="max-width:70px" onchange="editField('sedes',${i},'cap_s',+this.value)"></td>
+    <td><input class="ed" type="number" value="${s.cap_j}" style="max-width:70px" onchange="editField('sedes',${i},'cap_j',+this.value)"></td>
+    <td><input class="ed" type="number" value="${s.min_alerta}" style="max-width:70px" onchange="editField('sedes',${i},'min_alerta',+this.value)"></td>
+    <td><select class="ed-select" onchange="editField('sedes',${i},'vendedor',this.value)">
+      <option value="">—</option>
+      ${D.vendedores.map(v=>`<option ${s.vendedor===v.nombre?'selected':''}>${v.nombre}</option>`).join('')}
+    </select></td>
+    <td><label class="sw"><input type="checkbox" ${s.activo?'checked':''} onchange="editField('sedes',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+    <td><button class="btn btn-danger" onclick="deleteRow('sedes',${i})">✕</button></td>
+  </tr>`).join('') || emptyRow(8);
+}
+
+function renderSocios() {
+  g('tb-socios').innerHTML = D.socios.map((s,i) => `<tr>
+    <td><span class="tag t-gray">${s.id}</span></td>
+    <td><input class="ed" value="${s.nombre}" onchange="editField('socios',${i},'nombre',this.value)"></td>
+    <td><input class="ed" value="${s.banco}" onchange="editField('socios',${i},'banco',this.value)"></td>
+    <td><div style="display:flex;align-items:center;gap:6px">
+      <input class="ed" type="number" value="${s.desc}" style="max-width:60px" onchange="editField('socios',${i},'desc',+this.value)">
+      <span style="color:var(--muted);font-size:12px">%</span>
+    </div></td>
+    <td><span class="tag ${s.cats==='all'?'t-grn':'t-blu'}">${s.cats==='all'?'Todas':s.cats}</span></td>
+    <td style="font-family:var(--fM);font-size:11px;color:var(--muted)">${s.hasta||'—'}</td>
+    <td><label class="sw"><input type="checkbox" ${s.activo?'checked':''} onchange="editField('socios',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+    <td><button class="btn btn-danger" onclick="deleteRow('socios',${i})">✕</button></td>
+  </tr>`).join('') || emptyRow(8);
+}
+
+function renderComisiones() {
+  const tipLbl = {porcentaje:'% Ventas',fijo_unidad:'$ / unidad',bono_meta:'Bono meta'};
+  g('tb-com').innerHTML = D.comisiones.map((c,i) => `<tr>
+    <td>${c.vendedor}</td>
+    <td><span class="tag t-blu">${tipLbl[c.tipo]||c.tipo}</span></td>
+    <td>${c.aplica}</td>
+    <td><input class="ed" type="number" value="${c.valor}" onchange="editField('comisiones',${i},'valor',+this.value)"></td>
+    <td><label class="sw"><input type="checkbox" ${c.activo?'checked':''} onchange="editField('comisiones',${i},'activo',this.checked?1:0)"><span class="sw-track"></span></label></td>
+    <td><button class="btn btn-danger" onclick="deleteRow('comisiones',${i})">✕</button></td>
+  </tr>`).join('') || emptyRow(6);
+}
+
+function renderCats() {
+  g('tb-cats').innerHTML = D.categorias.map((c,i) => {
+    const prods = D.productos.filter(p=>p.cat===c.id).length;
+    return `<tr>
+      <td><span class="tag t-gray">${c.id}</span></td>
+      <td><input class="ed" value="${c.nombre}" onchange="editField('categorias',${i},'nombre',this.value)"></td>
+      <td><input class="ed" value="${c.icon}" maxlength="2" style="max-width:50px;text-align:center;font-size:18px" onchange="editField('categorias',${i},'icon',this.value)"></td>
+      <td><input type="color" value="${c.color}" style="width:40px;height:28px;border:none;background:none;cursor:pointer;padding:0" onchange="editField('categorias',${i},'color',this.value)"></td>
+      <td><span class="tag t-blu">${prods} prod.</span></td>
+      <td><label class="sw"><input type="checkbox" ${c.visible?'checked':''} onchange="editField('categorias',${i},'visible',this.checked?1:0)"><span class="sw-track"></span></label></td>
+      <td><button class="btn btn-danger" onclick="deleteRow('categorias',${i})">✕</button></td>
+    </tr>`;
+  }).join('') || emptyRow(7);
+}
+
+function renderRegalias() {
+  const total = D.regalias.length;
+  const costo = D.regalias.reduce((s,r)=>s+(r.costo||0),0);
+  g('kpi-reg').innerHTML = `
+    <div class="kpi-mini red"><div class="kpi-lbl">Registros</div><div class="kpi-val">${total}</div></div>
+    <div class="kpi-mini gold"><div class="kpi-lbl">Costo total</div><div class="kpi-val">${fmt(costo)}</div><div class="kpi-sub">No impacta ingresos</div></div>
+    <div class="kpi-mini blue"><div class="kpi-lbl">Sorteos</div><div class="kpi-val">${D.regalias.filter(r=>r.tipo==='sorteo').length}</div></div>`;
+  const tipTag = {regalo:'t-gld',perdida:'t-red',sorteo:'t-blu'};
+  g('tb-reg').innerHTML = [...D.regalias].reverse().map(r => `<tr>
+    <td style="font-family:var(--fM);font-size:11px;color:var(--muted)">${r.fecha||'—'}</td>
+    <td><span class="tag ${tipTag[r.tipo]||'t-gray'}">${r.tipo}</span></td>
+    <td>${r.prod||'—'}</td>
+    <td>${r.qty||1}</td>
+    <td style="color:var(--red);">${fmt(r.costo||0)}</td>
+    <td>${r.vendedor||'—'}</td>
+    <td>${r.sede||'—'}</td>
+    <td style="color:var(--muted);font-size:12px">${r.motivo||'—'}</td>
+    <td style="font-family:var(--fM);font-size:10px;color:var(--muted)">${r.txnId||'—'}</td>
+  </tr>`).join('') || emptyRow(9,'Sin registros aún');
+}
+
+function filterReg(tipo) {
+  document.querySelectorAll('#tb-reg tr').forEach(r => {
+    r.style.display = (!tipo || r.innerHTML.includes(tipo)) ? '' : 'none';
+  });
+}
+
+function renderLog() {
+  g('tb-log').innerHTML = D.log.slice(0,100).map(l => `<tr>
+    <td style="font-family:var(--fM);font-size:10px;color:var(--muted)">${l.ts}</td>
+    <td><span class="tag t-blu">${l.col}</span></td>
+    <td><span class="tag t-gray">${l.act}</span></td>
+    <td style="font-family:var(--fM);font-size:11px">${l.field}</td>
+    <td style="color:var(--muted);font-size:12px">${l.old}</td>
+    <td style="color:var(--grn);font-size:12px">${l.new}</td>
+  </tr>`).join('') || emptyRow(6,'Sin cambios registrados aún');
+}
+
+// ── ADD HANDLERS ──────────────────────────────────────────────
+function addProducto() {
+  const sku = g('np-sku').value.trim().toUpperCase();
+  const nom = g('np-nom').value.trim();
+  const precio = +g('np-precio').value;
+  const costo  = +g('np-costo').value;
+  if (!sku||!nom||!precio) { toast('Completa SKU, nombre y precio',true); return; }
+  D.productos.push({ sku, nombre:nom, cat:g('np-cat').value,
+    precio, costo, p6:+g('np-p6').value||null, p36:+g('np-p36').value||null, activo:1 });
+  addLog('productos','add','sku',null,sku);
+  persist(); renderAll();
+  closeModal('m-add-prod');
+  ['np-sku','np-nom','np-precio','np-costo','np-p6','np-p36'].forEach(id=>g(id).value='');
+  toast('✓ Producto agregado: '+nom);
+}
+
+function addPromo() {
+  const nom = g('npr-nom').value.trim();
+  const prod = g('npr-prod').value;
+  const qty  = +g('npr-qty').value;
+  const p    = +g('npr-precio').value;
+  if (!nom||!prod||!qty||!p) { toast('Completa todos los campos',true); return; }
+  D.promos.push({ nombre:nom, prod, qty_min:qty, precio:p, activo:1 });
+  persist(); renderAll();
+  closeModal('m-add-promo');
+  ['npr-nom','npr-qty','npr-precio'].forEach(id=>g(id).value='');
+  toast('✓ Promoción agregada: '+nom);
+}
+
+function addVendedor() {
+  const nom = g('nv-nom').value.trim();
+  if (!nom) { toast('Nombre requerido',true); return; }
+  D.vendedores.push({ nombre:nom, sede:g('nv-sede').value, device:g('nv-dev').value, activo:1 });
+  addLog('vendedores','add','nombre',null,nom);
+  persist(); renderAll();
+  closeModal('m-add-vend');
+  ['nv-nom','nv-dev'].forEach(id=>g(id).value='');
+  toast('✓ Vendedor agregado: '+nom);
+}
+
+function addSocio() {
+  const nom   = g('ns-nom').value.trim();
+  const banco = g('ns-banco').value.trim();
+  const desc  = +g('ns-desc').value;
+  if (!nom||!banco||!desc) { toast('Nombre, banco y descuento requeridos',true); return; }
+  const id = 'S'+String(Date.now()).slice(-4);
+  D.socios.push({ id, nombre:nom, banco, desc, cats:g('ns-cat').value, hasta:g('ns-hasta').value, activo:1 });
+  addLog('socios','add','nombre',null,nom);
+  persist(); renderAll();
+  closeModal('m-add-socio');
+  ['ns-nom','ns-banco','ns-desc','ns-hasta'].forEach(id=>g(id).value='');
+  toast('✓ Socio agregado: '+nom);
+}
+
+function addCat() {
+  const id  = g('nc-id').value.trim().toLowerCase().replace(/\s+/g,'-');
+  const nom = g('nc-nom').value.trim();
+  if (!id||!nom) { toast('ID y nombre requeridos',true); return; }
+  D.categorias.push({ id, nombre:nom, icon:g('nc-icon').value||'📦', color:g('nc-color').value, sub:g('nc-sub').value, visible:1 });
+  addLog('categorias','add','id',null,id);
+  persist(); renderAll();
+  closeModal('m-add-cat');
+  ['nc-id','nc-nom','nc-icon','nc-sub'].forEach(id=>g(id).value='');
+  toast('✓ Categoría agregada: '+nom);
+}
+
+function addSede() {
+  const nom = g('nsede-nom').value.trim();
+  if (!nom) { toast('Nombre requerido',true); return; }
+  D.sedes.push({ nombre:nom, dir:g('nsede-dir').value,
+    cap_s:+g('nsede-cs').value||90, cap_j:+g('nsede-cj').value||90,
+    min_alerta:+g('nsede-min').value||20, vendedor:g('nsede-vend').value, activo:1 });
+  addLog('sedes','add','nombre',null,nom);
+  persist(); renderAll();
+  closeModal('m-add-sede');
+  ['nsede-nom','nsede-dir'].forEach(id=>g(id).value='');
+  toast('✓ Sede agregada: '+nom);
+}
+
+function addCom() {
+  D.comisiones.push({ vendedor:g('nc-vend').value, tipo:g('nc-tipo').value,
+    aplica:g('nc-aplica').value, valor:+g('nc-val').value, activo:1 });
+  persist(); renderAll();
+  closeModal('m-add-com');
+  g('nc-val').value='';
+  toast('✓ Regla de comisión agregada');
+}
+
+function addRegalia() {
+  const prod = g('nr-prod').value;
+  const qty  = +g('nr-qty').value;
+  if (!prod||!qty) { toast('Producto y cantidad requeridos',true); return; }
+  const prodData = D.productos.find(p=>p.sku===prod);
+  const costo = (prodData?.costo||0) * qty;
+  const txnId = 'TXN-'+[...Array(10)].map(()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+  D.regalias.push({ fecha:new Date().toLocaleDateString('es-CL'), tipo:g('nr-tipo').value,
+    prod, qty, costo, vendedor:g('nr-vend').value, sede:g('nr-sede').value,
+    motivo:g('nr-motivo').value, txnId });
+  addLog('regalias','add','txnId',null,txnId);
+  persist(); renderRegalias();
+  closeModal('m-add-reg');
+  g('nr-motivo').value=''; g('nr-qty').value=1;
+  toast('✓ Registrado a costo: '+fmt(costo));
+  // Sync to Sheets
+  if (API_URL) fetch(API_URL,{method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'admin_tipo_tx',transaction_id:txnId,
+      tipo_transaccion:g('nr-tipo').value, prod, qty, costo,
+      sede:g('nr-sede').value, vendedor:g('nr-vend').value})}).catch(()=>{});
+}
+
+// ── SYNC ──────────────────────────────────────────────────────
+async function syncAll() {
+  persist();
+  if (!API_URL) { toast('Configura la URL del API primero',true); show('config'); return; }
+  const btn = g('btn-sync');
+  g('sync-icon').style.display='none'; g('sync-spin').style.display='inline';
+  btn.disabled=true;
+  try {
+    await fetch(API_URL,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'sync_config',data:D})});
+    toast('✅ Sincronizado con Google Sheets');
+    addLog('sistema','sync','all',null,new Date().toISOString()); persist();
+  } catch(e) {
+    toast('⚠ Error: '+e.message,true);
+  } finally {
+    g('sync-icon').style.display=''; g('sync-spin').style.display='none'; btn.disabled=false;
+  }
+}
+
+// ── CONFIG ────────────────────────────────────────────────────
+function saveConfig() {
+  API_URL = g('cfg-url').value.trim();
+  localStorage.setItem('db_api_url', API_URL);
+  updateApiStatus();
+  toast('✓ Configuración guardada');
+}
+
+async function testConn() {
+  const url = g('cfg-url').value.trim();
+  if (!url) { toast('Ingresa la URL primero',true); return; }
+  const ok = g('conn-ok'), msg = g('conn-msg');
+  ok.style.display='none';
+  try {
+    const r = await fetch(url+'?resource=config'), j = await r.json();
+    ok.style.display='flex'; ok.className='callout ok';
+    msg.textContent = j.ok
+      ? '✅ Conectado · API v'+(j.data?.VERSION_API||'?')
+      : '⚠ Respuesta recibida con error: '+(j.error||'?');
+    if (j.ok) { API_URL=url; localStorage.setItem('db_api_url',url); updateApiStatus(); }
+  } catch(e) {
+    ok.style.display='flex'; ok.className='callout warn';
+    msg.textContent = '❌ Sin conexión: '+e.message;
+  }
+}
+
+function updateApiStatus() {
+  const bar = g('api-status-bar'), txt = g('api-status-txt');
+  if (API_URL && !API_URL.includes('TU_WEB_APP_ID')) {
+    bar.className='api-status connected';
+    txt.textContent='Conectado: '+API_URL.slice(0,55)+'...';
+  } else {
+    bar.className='api-status';
+    txt.textContent='Sin configurar — pega tu URL de Apps Script';
+  }
+}
+
+// ── FILTER TABLE ──────────────────────────────────────────────
+function filterTbl(tblId, q) {
+  q=q.toLowerCase();
+  document.querySelectorAll('#'+tblId+' tbody tr').forEach(r=>{
+    r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+// ── LOG ───────────────────────────────────────────────────────
+function addLog(col,act,field,old,nw) {
+  D.log.unshift({ts:new Date().toLocaleTimeString('es-CL'),col,act,field,
+    old:old!=null?String(old).slice(0,40):'—',new:nw!=null?String(nw).slice(0,40):'—'});
+  if (D.log.length>200) D.log=D.log.slice(0,200);
+  renderLog();
+}
+function clearLog() {
+  if (!confirm('¿Limpiar el log local?')) return;
+  D.log=[]; persist(); renderLog(); toast('Log limpiado');
+}
+
+// ── MODALS ────────────────────────────────────────────────────
+function openModal(id) {
+  g(id).classList.add('open');
+  // Populate dynamic selects
+  const cats = D.categorias.map(c=>`<option value="${c.id}">${c.icon} ${c.nombre}</option>`).join('');
+  const prods = D.productos.map(p=>`<option value="${p.sku}">${p.nombre}</option>`).join('');
+  const sedes = D.sedes.map(s=>`<option>${s.nombre}</option>`).join('');
+  const vends = D.vendedores.map(v=>`<option>${v.nombre}</option>`).join('');
+  const safe = (selId, html, prefix='') => {
+    const el=g(selId); if(el) el.innerHTML=prefix+html;
+  };
+  safe('np-cat',   cats, '<option value="">—</option>');
+  safe('npr-prod', prods,'<option value="">—</option>');
+  safe('nv-sede',  sedes,'<option value="">—</option>');
+  safe('nsede-vend',vends,'<option value="">—</option>');
+  safe('nr-sede',  sedes,'<option value="">—</option>');
+  safe('nr-prod',  prods,'<option value="">—</option>');
+  safe('nr-vend',  '<option value="Admin">Admin</option>'+vends);
+  safe('nc-vend',  '<option value="todos">Todos</option>'+vends);
+  safe('ns-cat',   cats, '<option value="all">Todas</option>');
+}
+function closeModal(id) { g(id).classList.remove('open') }
+document.querySelectorAll('.overlay').forEach(o=>
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open') })
+);
+
+// ── TOAST ─────────────────────────────────────────────────────
+let tT;
+function toast(msg,err=false) {
+  const t=g('toast');
+  t.textContent=msg; t.className=err?'show err':'show';
+  clearTimeout(tT); tT=setTimeout(()=>t.className='',3500);
+}
+
+// ── EXPORT CONFIG (para uso desde Registro/Dashboard) ─────────
+window.getDBConfig = () => ({
+  productos:  D.productos.filter(p=>p.activo),
+  categorias: D.categorias.filter(c=>c.visible),
+  vendedores: D.vendedores.filter(v=>v.activo),
+  sedes:      D.sedes.filter(s=>s.activo),
+  socios:     D.socios.filter(s=>s.activo),
+  promos:     D.promos.filter(p=>p.activo),
+});
+
+// ── START ─────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

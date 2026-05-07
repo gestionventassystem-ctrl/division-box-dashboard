@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>División Box — Dashboard Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ================================================================
+   DIVISIÓN BOX — DASHBOARD ADMIN v6.0 PRODUCTION
+   Aesthetic: Neon-Sport Command Center · Vivid · Authoritative
+   Palette: #060606 / #ff0a14 / #00ff88 / #ffcc00 / #00aaff
+   NEW: Italy-flag filter strip · Loyalty watermark · 
+        Incentivos panel · Email report · Glow effects
+   Size budget: CSS~18KB JS~24KB HTML~15KB = ~57KB total
+================================================================ */
+:root {
+  /* ── Dark base ── */
+  --ink:   #060606;
+  --bg:    #0c0c0c;
+  --s1:    #111214;
+  --s2:    #181a1e;
+  --s3:    #212428;
+  --s4:    #2a2d34;
+  --bdr:   #252830;
+  --bdr2:  #363a44;
+
+  /* ── Vivid palette (brighter than v5) ── */
+  --red:   #ff0a14;
+  --red2:  #ff4d54;
+  --rdim:  rgba(255,10,20,.13);
+  --rdim2: rgba(255,10,20,.22);
+  --grn:   #00ff88;
+  --gdim:  rgba(0,255,136,.1);
+  --gld:   #ffcc00;
+  --gdld:  rgba(255,204,0,.1);
+  --blu:   #00aaff;
+  --bdim:  rgba(0,170,255,.1);
+  --purp:  #cc44ff;
+  --text:  #d8dce8;
+  --muted: #56606e;
+  --cream: #f0ece4;
+
+  /* ── Italy flag colors (filter strip) ── */
+  --ita-g: #009246;
+  --ita-w: #ffffff;
+  --ita-r: #ce2b37;
+
+  /* ── Typography ── */
+  --fD: 'Bebas Neue', sans-serif;
+  --fB: 'Outfit', sans-serif;
+  --fM: 'JetBrains Mono', monospace;
+
+  /* ── Layout ── */
+  --nav-h:    52px;
+  --strip-h:  56px;
+  --r:        5px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fB);
+  font-size: 14px;
+  overflow-x: hidden;
+  /* Subtle grid */
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+::-webkit-scrollbar { width:3px; height:3px }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius:2px }
+
+/* ══════════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════ */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height: var(--nav-h);
+  background: rgba(6,6,6,.97);
+  border-bottom: 1px solid var(--bdr);
+  display:flex; align-items:center;
+  padding: 0 20px; gap:0;
+  backdrop-filter: blur(24px);
+}
+.nav-logo { height:28px; border-radius:2px; margin-right:10px; opacity:.92 }
+.nav-brand {
+  font-family: var(--fD); font-size:17px; letter-spacing:.08em;
+  color: var(--cream); margin-right:6px; white-space:nowrap;
+}
+.nav-brand b { color: var(--red) }
+.nav-pill {
+  font-family: var(--fM); font-size:9px; letter-spacing:.14em;
+  background: var(--rdim); border:1px solid rgba(255,10,20,.35);
+  color: var(--red); border-radius:2px; padding:2px 8px; margin-right:20px;
+}
+.nav-links { display:flex; gap:0; flex:1; overflow:hidden }
+.nav-link {
+  padding:0 15px; height: var(--nav-h);
+  display:flex; align-items:center;
+  font-family: var(--fB); font-size:13px; font-weight:500;
+  color: rgba(216,220,232,.4); text-decoration:none;
+  border-bottom:2px solid transparent;
+  transition: color .15s, border-color .15s; white-space:nowrap;
+}
+.nav-link:hover { color: var(--text) }
+.nav-link.active { color: var(--cream); border-bottom-color: var(--red) }
+.nav-sep { flex:1 }
+
+.live-badge {
+  display:flex; align-items:center; gap:7px;
+  font-family: var(--fM); font-size:10px; color: var(--grn);
+  margin-right:14px;
+}
+.live-dot {
+  width:6px; height:6px; border-radius:50%;
+  background: var(--grn); box-shadow:0 0 10px var(--grn);
+  animation: blink 1.8s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+.nav-time {
+  font-family: var(--fM); font-size:11px; color: var(--muted);
+  margin-right:14px; white-space:nowrap;
+}
+
+.btn-export, .btn-email {
+  display:flex; align-items:center; gap:5px;
+  border-radius: var(--r); font-family: var(--fB);
+  font-size:12px; font-weight:600;
+  padding:7px 13px; cursor:pointer; transition:all .15s;
+  white-space:nowrap; border:none;
+}
+.btn-export {
+  background: var(--s3); color: var(--text);
+  border:1px solid var(--bdr2); margin-right:6px;
+}
+.btn-export:hover { border-color: var(--grn); color: var(--grn) }
+.btn-email {
+  background: linear-gradient(135deg, #0044cc, #0066ff);
+  color:#fff; box-shadow:0 0 12px rgba(0,100,255,.4);
+}
+.btn-email:hover { box-shadow:0 0 20px rgba(0,100,255,.6) }
+
+/* ══════════════════════════════════════════════════
+   ITALY-FLAG FILTER STRIP
+══════════════════════════════════════════════════ */
+.filter-strip {
+  position:fixed; top: var(--nav-h); left:0; right:0; z-index:190;
+  height: var(--strip-h);
+  display:flex; align-items:center;
+  padding:0 20px; gap:12px; overflow-x:auto;
+  /* Italy stripes */
+  background: linear-gradient(
+    180deg,
+    var(--ita-g)  0%,
+    var(--ita-g) 33.3%,
+    var(--ita-w) 33.3%,
+    var(--ita-w) 66.6%,
+    var(--ita-r) 66.6%,
+    var(--ita-r) 100%
+  );
+}
+/* Dark overlay so content is readable */
+.filter-strip::before {
+  content:'';
+  position:absolute; inset:0;
+  background: rgba(6,6,6,.84);
+  backdrop-filter: blur(2px);
+  pointer-events:none;
+}
+/* Banner image behind everything */
+.filter-banner {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  opacity:.08; pointer-events:none;
+}
+.filter-strip > * { position:relative; z-index:1; flex-shrink:0 }
+
+.f-sep { width:1px; height:28px; background: var(--bdr) }
+.f-label {
+  font-family: var(--fM); font-size:9px; letter-spacing:.15em;
+  text-transform:uppercase; color: var(--muted);
+}
+.f-group { display:flex; align-items:center; gap:8px }
+
+.mode-tabs {
+  display:flex; gap:2px; background: rgba(6,6,6,.6);
+  border:1px solid var(--bdr); border-radius: var(--r); padding:2px;
+}
+.mode-tab {
+  padding:4px 11px; border-radius:3px;
+  font-family: var(--fB); font-size:11px; font-weight:600; letter-spacing:.04em;
+  color: var(--muted); cursor:pointer; transition:all .15s; white-space:nowrap;
+}
+.mode-tab.active {
+  background: var(--red); color:#fff;
+  box-shadow:0 0 12px rgba(255,10,20,.5);
+}
+.mode-tab:hover:not(.active) { background: var(--s3); color: var(--text) }
+
+.fsel, .finput {
+  background: rgba(6,6,6,.7); border:1px solid var(--bdr);
+  border-radius: var(--r); color: var(--text);
+  font-family: var(--fM); font-size:11px; padding:6px 10px; outline:none;
+  min-width:110px; cursor:pointer; -webkit-appearance:none; appearance:none;
+}
+.fsel:focus, .finput:focus { border-color: var(--red) }
+
+.btn-apply {
+  background: var(--red); border:none; border-radius: var(--r);
+  color:#fff; font-family: var(--fB); font-size:12px; font-weight:700;
+  letter-spacing:.06em; padding:8px 16px; cursor:pointer;
+  box-shadow:0 0 16px rgba(255,10,20,.4); transition:all .15s;
+}
+.btn-apply:hover { box-shadow:0 0 28px rgba(255,10,20,.7) }
+.btn-refresh {
+  background: rgba(6,6,6,.7); border:1px solid var(--bdr); border-radius: var(--r);
+  color: var(--muted); font-size:16px; padding:5px 10px; cursor:pointer; transition:all .15s;
+}
+.btn-refresh:hover { color: var(--text); border-color: var(--bdr2) }
+.btn-refresh.spin { animation:rot .5s linear infinite }
+@keyframes rot { to{transform:rotate(360deg)} }
+.last-upd { font-family: var(--fM); font-size:10px; color: var(--muted); margin-left:auto }
+
+/* ══════════════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════════════ */
+.main {
+  margin-top: calc(var(--nav-h) + var(--strip-h));
+  padding:20px; max-width:1440px; margin-left:auto; margin-right:auto;
+  padding-top:28px;
+}
+
+/* ── Tab navigation (Dashboard | Incentivos) ── */
+.view-tabs {
+  display:flex; gap:0; margin-bottom:20px;
+  border-bottom:1px solid var(--bdr);
+}
+.view-tab {
+  padding:10px 24px; cursor:pointer;
+  font-family: var(--fD); font-size:18px; letter-spacing:.06em;
+  color: var(--muted); border-bottom:3px solid transparent;
+  transition:all .15s;
+}
+.view-tab:hover { color: var(--text) }
+.view-tab.active { color: var(--cream); border-bottom-color: var(--red) }
+
+/* ── Views ── */
+.view { display:none }
+.view.active { display:block }
+
+/* ══════════════════════════════════════════════════
+   LOYALTY WATERMARK
+══════════════════════════════════════════════════ */
+.loyalty-mark {
+  position:fixed; bottom:28px; right:28px; z-index:5;
+  font-family: var(--fD); font-size:11px; letter-spacing:.3em;
+  text-transform:uppercase; color: rgba(255,255,255,.06);
+  transform: rotate(-30deg);
+  pointer-events:none; user-select:none;
+  text-shadow: 0 0 30px rgba(255,10,20,.1);
+  line-height:1.3;
+}
+
+/* ══════════════════════════════════════════════════
+   KPI CARDS — GLOWING
+══════════════════════════════════════════════════ */
+.kpi-grid {
+  display:grid; grid-template-columns:repeat(5,1fr);
+  gap:10px; margin-bottom:16px;
+}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:680px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+
+.kpi {
+  background: var(--s1); border:1px solid var(--bdr);
+  border-radius: var(--r); padding:18px 16px 14px;
+  position:relative; overflow:hidden;
+  transition: border-color .2s, box-shadow .2s;
+  animation: fadeUp .4s ease both;
+}
+.kpi:hover { border-color: var(--bdr2) }
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px }
+
+.kpi.c-red::before   { background: var(--red); box-shadow:0 2px 12px var(--red) }
+.kpi.c-green::before { background: var(--grn); box-shadow:0 2px 12px var(--grn) }
+.kpi.c-gold::before  { background: var(--gld); box-shadow:0 2px 12px var(--gld) }
+.kpi.c-blue::before  { background: var(--blu); box-shadow:0 2px 12px var(--blu) }
+.kpi.c-purp::before  { background: var(--purp); box-shadow:0 2px 12px var(--purp) }
+
+.kpi:hover.c-red   { box-shadow:0 0 24px rgba(255,10,20,.15) }
+.kpi:hover.c-green { box-shadow:0 0 24px rgba(0,255,136,.12) }
+.kpi:hover.c-gold  { box-shadow:0 0 24px rgba(255,204,0,.12) }
+.kpi:hover.c-blue  { box-shadow:0 0 24px rgba(0,170,255,.12) }
+
+.kpi-icon {
+  position:absolute; right:14px; top:14px;
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; opacity:.6;
+}
+.kpi.c-red   .kpi-icon { background:var(--rdim); color:var(--red) }
+.kpi.c-green .kpi-icon { background:var(--gdim); color:var(--grn) }
+.kpi.c-gold  .kpi-icon { background:var(--gdld); color:var(--gld) }
+.kpi.c-blue  .kpi-icon { background:var(--bdim); color:var(--blu) }
+.kpi.c-purp  .kpi-icon { background:rgba(204,68,255,.1); color:var(--purp) }
+
+.kpi-label {
+  font-family: var(--fM); font-size:9px; letter-spacing:.14em;
+  text-transform:uppercase; color: var(--muted); margin-bottom:8px;
+}
+.kpi-value {
+  font-family: var(--fM); font-size:28px; font-weight:500;
+  line-height:1; color: var(--cream); margin-bottom:6px;
+}
+.kpi-trend { display:flex; align-items:center; gap:5px; font-family: var(--fM); font-size:10px }
+.kpi-trend .up  { color:var(--grn) }
+.kpi-trend .dn  { color:var(--red) }
+.kpi-trend .vs  { color:var(--muted) }
+
+/* ══════════════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════════════ */
+.card {
+  background: var(--s1); border:1px solid var(--bdr);
+  border-radius: var(--r); overflow:hidden;
+  animation: fadeUp .4s ease both;
+  transition: border-color .2s;
+}
+.card:hover { border-color: var(--bdr2) }
+.card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-bottom:1px solid var(--bdr);
+  flex-wrap:wrap; gap:8px;
+}
+.card-title {
+  font-family: var(--fB); font-size:11px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; color: var(--muted);
+  display:flex; align-items:center; gap:8px;
+}
+.card-title .dot { width:6px; height:6px; border-radius:50% }
+.dot.red   { background:var(--red);  box-shadow:0 0 6px var(--red) }
+.dot.green { background:var(--grn);  box-shadow:0 0 6px var(--grn) }
+.dot.gold  { background:var(--gld);  box-shadow:0 0 6px var(--gld) }
+.dot.blue  { background:var(--blu);  box-shadow:0 0 6px var(--blu) }
+.dot.purp  { background:var(--purp); box-shadow:0 0 6px var(--purp) }
+.card-body { padding:16px }
+
+.chart-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-bottom:16px }
+.chart-row2 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px }
+@media(max-width:1100px){.chart-grid,.chart-row2{grid-template-columns:1fr 1fr}}
+@media(max-width:660px){.chart-grid,.chart-row2{grid-template-columns:1fr}}
+
+/* Range tabs */
+.range-tabs { display:flex; gap:2px }
+.range-tab {
+  padding:3px 10px; border-radius:2px;
+  font-family: var(--fM); font-size:10px; color: var(--muted); cursor:pointer; transition:all .15s;
+}
+.range-tab.active { background:var(--red); color:#fff; box-shadow:0 0 8px rgba(255,10,20,.4) }
+.range-tab:hover:not(.active) { background:var(--s3); color:var(--text) }
+
+/* Horizontal bars */
+.hbar-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.025) }
+.hbar-item:last-child { border-bottom:none }
+.hbar-name { font-family: var(--fB); font-size:12px; font-weight:500; color:var(--text); width:110px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.hbar-track { flex:1; height:5px; background:var(--s3); border-radius:3px; overflow:hidden }
+.hbar-fill { height:100%; border-radius:3px; transition:width .9s cubic-bezier(.16,1,.3,1) }
+.hbar-val { font-family: var(--fM); font-size:11px; color:var(--muted); width:72px; text-align:right; flex-shrink:0 }
+
+/* Tags */
+.tag { display:inline-block; border-radius:2px; font-family: var(--fM); font-size:9px; letter-spacing:.06em; padding:2px 7px; white-space:nowrap }
+.t-red   { background:var(--rdim);  color:var(--red);  border:1px solid rgba(255,10,20,.25) }
+.t-green { background:var(--gdim);  color:var(--grn);  border:1px solid rgba(0,255,136,.2) }
+.t-gold  { background:var(--gdld);  color:var(--gld);  border:1px solid rgba(255,204,0,.2) }
+.t-blue  { background:var(--bdim);  color:var(--blu);  border:1px solid rgba(0,170,255,.2) }
+.t-gray  { background:var(--s3);    color:var(--muted);border:1px solid var(--bdr) }
+
+/* Tables */
+.tbl-wrap { overflow-x:auto }
+table { width:100%; border-collapse:collapse }
+thead th {
+  background:var(--s2); padding:9px 14px;
+  font-family: var(--fM); font-size:9px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); text-align:left; border-bottom:1px solid var(--bdr); white-space:nowrap;
+}
+tbody td { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.025); font-size:12px; color:var(--text) }
+tbody tr:last-child td { border-bottom:none }
+tbody tr:hover td { background:rgba(255,255,255,.02) }
+.td-mono { font-family: var(--fM); font-size:11px }
+.td-muted { color:var(--muted) }
+
+/* Stock */
+.stock-grid { display:flex; flex-direction:column }
+.stock-row { display:flex; align-items:center; justify-content:space-between; padding:11px 16px; border-bottom:1px solid rgba(255,255,255,.025) }
+.stock-row:last-child { border-bottom:none }
+.stock-left { display:flex; align-items:center; gap:10px }
+.stock-led { width:8px; height:8px; border-radius:50%; flex-shrink:0 }
+.stock-sede { font-family: var(--fB); font-size:12px; font-weight:600; color:var(--text) }
+.stock-prod { font-family: var(--fM); font-size:10px; color:var(--muted); margin-top:2px }
+.stock-num { font-family: var(--fM); font-size:20px; font-weight:500; line-height:1 }
+.stock-cap { font-family: var(--fM); font-size:9px; color:var(--muted); margin-top:2px; text-align:right }
+.stock-num.ok   { color:var(--grn); text-shadow:0 0 12px var(--grn) }
+.stock-num.warn { color:var(--gld); text-shadow:0 0 12px var(--gld) }
+.stock-num.crit { color:var(--red); text-shadow:0 0 12px var(--red) }
+
+/* Financial */
+.fin-row { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,.025); font-size:13px }
+.fin-row:last-child { border-bottom:none }
+.fin-label { color:var(--muted) }
+.fin-val { font-family: var(--fM); font-weight:500; color:var(--text) }
+.fin-val.pos { color:var(--grn) }
+.fin-val.neg { color:var(--red) }
+.fin-val.gold { color:var(--gld) }
+.fin-row.total { background:var(--s2) }
+.fin-row.total .fin-label { color:var(--text); font-weight:600 }
+.fin-row.total .fin-val { color:var(--cream); font-size:16px }
+
+/* Alert */
+.alert-strip {
+  display:none; background:rgba(255,10,20,.07); border:1px solid rgba(255,10,20,.3);
+  border-left:4px solid var(--red); border-radius: var(--r); padding:10px 14px; margin-bottom:14px;
+  font-family: var(--fB); font-size:13px; color:var(--red);
+  align-items:center; gap:10px;
+}
+.alert-strip.show { display:flex }
+
+/* ══════════════════════════════════════════════════
+   INCENTIVOS VIEW
+══════════════════════════════════════════════════ */
+.inc-hero {
+  background: linear-gradient(135deg, #0a0005 0%, #18001a 50%, #0a0010 100%);
+  border:1px solid rgba(204,68,255,.2); border-radius: var(--r);
+  padding:28px 32px; margin-bottom:16px; position:relative; overflow:hidden;
+}
+.inc-hero::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(204,68,255,.08), transparent 60%);
+  pointer-events:none;
+}
+.inc-hero-label { font-family: var(--fM); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--purp); margin-bottom:6px }
+.inc-hero-title { font-family: var(--fD); font-size:40px; letter-spacing:.04em; color: var(--cream); line-height:1 }
+.inc-hero-sub { font-family: var(--fB); font-size:14px; color: var(--muted); margin-top:8px }
+
+.inc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px }
+@media(max-width:900px){.inc-grid{grid-template-columns:repeat(2,1fr)}}
+
+.inc-card {
+  background: var(--s1); border:1px solid var(--bdr); border-radius: var(--r);
+  overflow:hidden; transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.inc-card:hover { transform:translateY(-4px); border-color: rgba(204,68,255,.4); box-shadow:0 8px 32px rgba(204,68,255,.1) }
+.inc-top { height:3px }
+.inc-top.purp  { background:var(--purp); box-shadow:0 2px 10px var(--purp) }
+.inc-top.gold  { background:var(--gld);  box-shadow:0 2px 10px var(--gld) }
+.inc-top.green { background:var(--grn);  box-shadow:0 2px 10px var(--grn) }
+.inc-top.red   { background:var(--red);  box-shadow:0 2px 10px var(--red) }
+.inc-inner { padding:20px }
+.inc-icon-wrap { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:14px }
+.inc-name { font-family: var(--fD); font-size:20px; letter-spacing:.04em; color:var(--cream); margin-bottom:4px }
+.inc-type { font-family: var(--fM); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:12px }
+.inc-desc { font-family: var(--fB); font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:12px }
+.inc-mechanic {
+  background: var(--s3); border-radius:4px; padding:12px 14px;
+  font-family: var(--fM); font-size:11px; color:rgba(216,220,232,.7); line-height:1.8;
+  border:1px solid var(--bdr);
+}
+.inc-mechanic .hl  { color:var(--gld) }
+.inc-mechanic .hlg { color:var(--grn) }
+.inc-mechanic .hlr { color:var(--red) }
+.inc-mechanic .hlp { color:var(--purp) }
+
+/* Meta progress */
+.meta-card {
+  background: var(--s1); border:1px solid var(--bdr); border-radius: var(--r);
+  padding:20px; margin-bottom:16px;
+}
+.meta-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px }
+@media(max-width:800px){.meta-grid{grid-template-columns:repeat(2,1fr)}}
+.meta-item { background:var(--s2); border-radius:4px; padding:16px; position:relative; overflow:hidden }
+.meta-name { font-family: var(--fB); font-size:13px; font-weight:600; color:var(--text); margin-bottom:8px }
+.meta-progress-track { height:6px; background:var(--s4); border-radius:3px; margin-bottom:8px; overflow:hidden }
+.meta-progress-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.16,1,.3,1) }
+.meta-nums { display:flex; justify-content:space-between; font-family: var(--fM); font-size:10px; color:var(--muted) }
+.meta-target { color:var(--grn) }
+.meta-pct { font-family: var(--fD); font-size:28px; color:var(--cream); line-height:1; margin-bottom:4px }
+
+/* ══════════════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════════════ */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:300;
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.overlay.open { display:flex; animation:fadeIn .2s ease }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.modal {
+  background:var(--s1); border:1px solid var(--bdr2); border-radius:6px;
+  width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+  animation:slideUp .25s cubic-bezier(.16,1,.3,1);
+}
+@keyframes slideUp { from{transform:translateY(14px);opacity:0} to{transform:none;opacity:1} }
+.modal-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border-bottom:1px solid var(--bdr);
+  position:sticky; top:0; background:var(--s1); z-index:1;
+}
+.modal-title { font-family: var(--fD); font-size:20px; color:var(--cream) }
+.modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; transition:color .15s }
+.modal-close:hover { color:var(--text) }
+.modal-body { padding:20px }
+.modal-foot { padding:14px 20px; border-top:1px solid var(--bdr); display:flex; gap:8px; justify-content:flex-end }
+
+.fg { display:flex; flex-direction:column; gap:5px; margin-bottom:14px }
+.fl { font-family: var(--fM); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted) }
+.fc {
+  background:var(--s2); border:1px solid var(--bdr); border-radius: var(--r);
+  color:var(--text); font-family: var(--fB); font-size:13px; padding:9px 12px; outline:none;
+  transition:border-color .15s; -webkit-appearance:none; appearance:none;
+}
+.fc:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(255,10,20,.1) }
+select.fc { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23666' d='M5 6L0 0h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:28px }
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; gap:5px; border-radius: var(--r); font-family: var(--fB); font-size:12px; font-weight:600; padding:7px 14px; cursor:pointer; border:none; transition:all .15s; letter-spacing:.04em }
+.btn-red   { background:var(--red); color:#fff; box-shadow:0 0 12px rgba(255,10,20,.35) }
+.btn-red:hover { box-shadow:0 0 24px rgba(255,10,20,.6) }
+.btn-ghost { background:var(--s3); color:var(--text); border:1px solid var(--bdr) }
+.btn-ghost:hover { border-color:var(--bdr2) }
+.btn-danger { background:transparent; color:var(--red); border:1px solid rgba(255,10,20,.3); box-shadow:none }
+.btn-danger:hover { background:var(--rdim) }
+.btn-sm { padding:5px 10px; font-size:11px }
+
+/* Email modal info */
+.email-info {
+  background: var(--s2); border:1px solid var(--bdr); border-radius: var(--r);
+  padding:12px 14px; margin-bottom:14px;
+  font-family: var(--fM); font-size:11px; color:var(--muted); line-height:1.7;
+}
+
+/* Toast */
+#toast {
+  position:fixed; bottom:20px; right:20px; z-index:400;
+  background:var(--s2); border:1px solid var(--bdr2);
+  border-left:3px solid var(--grn); border-radius: var(--r);
+  padding:11px 18px; font-family: var(--fB); font-size:13px; color:var(--text);
+  max-width:300px; transform:translateX(120%); transition:transform .3s cubic-bezier(.16,1,.3,1);
+}
+#toast.show { transform:none }
+#toast.err  { border-left-color:var(--red) }
+
+.empty { padding:32px; text-align:center; font-family: var(--fM); font-size:11px; color:var(--muted) }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     LOYALTY WATERMARK
+════════════════════════════════════════════ -->
+<div class="loyalty-mark">LOYALTY<br>PERCISTENCE</div>
+
+<!-- ════════════════════════════════════════════
+     TOP NAV
+════════════════════════════════════════════ -->
+<nav class="nav">
+  <img class="nav-logo" id="nav-logo" alt="DB">
+  <div class="nav-brand">DIVISIÓN <b>BOX</b></div>
+  <span class="nav-pill">ADMIN v6</span>
+  <div class="nav-links">
+    <a class="nav-link active" href="#main-view" onclick="setView('dashboard')">📊 Dashboard</a>
+    <a class="nav-link" href="#main-view" onclick="setView('incentivos')">🏆 Incentivos</a>
+    <a class="nav-link" href="#transacciones">📋 Transacciones</a>
+    <a class="nav-link" href="#inventario">📦 Inventario</a>
+    <a class="nav-link" href="Registro_venta_v2_Categorias.html" target="_blank">➕ Nueva Venta</a>
+    <a class="nav-link" href="backoffice.html" target="_blank">⚙ Backoffice</a>
+  </div>
+  <div class="nav-sep"></div>
+  <div class="live-badge"><span class="live-dot"></span>EN VIVO</div>
+  <div class="nav-time" id="nav-time"></div>
+  <button class="btn-email" onclick="openModal('modal-email')">✉ Email Report</button>
+  <button class="btn-export" onclick="exportCSV()" style="margin-left:6px">↓ CSV</button>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     ITALY-FLAG FILTER STRIP
+════════════════════════════════════════════ -->
+<div class="filter-strip" id="filter-strip">
+  <div class="filter-banner" id="filter-banner"></div>
+
+  <!-- Modo -->
+  <div class="f-group">
+    <div class="mode-tabs" id="mode-tabs">
+      <div class="mode-tab" onclick="setMode('hoy')">Hoy</div>
+      <div class="mode-tab" onclick="setMode('ayer')">Ayer</div>
+      <div class="mode-tab" onclick="setMode('7d')">7D</div>
+      <div class="mode-tab active" onclick="setMode('mes')">Mes</div>
+      <div class="mode-tab" onclick="setMode('rango')">Rango</div>
+    </div>
+  </div>
+
+  <div class="f-group" id="grp-desde" style="display:none">
+    <span class="f-label">Desde</span>
+    <input type="date" class="finput" id="f-desde">
+  </div>
+  <div class="f-group" id="grp-hasta" style="display:none">
+    <span class="f-label">Hasta</span>
+    <input type="date" class="finput" id="f-hasta">
+  </div>
+
+  <div class="f-sep"></div>
+
+  <div class="f-group">
+    <span class="f-label">Sede</span>
+    <select class="fsel" id="f-sede">
+      <option value="">Todas las sedes</option>
+      <option>San Miguel</option><option>La Cisterna</option><option>Externo</option>
+    </select>
+  </div>
+  <div class="f-group">
+    <span class="f-label">Vendedor</span>
+    <select class="fsel" id="f-vendedor">
+      <option value="">Todos</option>
+      <option>Angelo Alvarez</option><option>Karen</option>
+      <option>Xoly</option><option>Tito</option>
+    </select>
+  </div>
+  <div class="f-group">
+    <span class="f-label">Categoría</span>
+    <select class="fsel" id="f-categoria">
+      <option value="">Todas</option>
+      <option value="ambrosia">Ambrosia</option>
+      <option value="store">División Store</option>
+      <option value="eventos">Eventos</option>
+      <option value="planes">Planes Box</option>
+    </select>
+  </div>
+
+  <button class="btn-apply" onclick="applyFilters()">Aplicar</button>
+  <button class="btn-refresh" id="btn-refresh" onclick="reload()">↻</button>
+  <span class="last-upd" id="last-upd">—</span>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════ -->
+<div class="main" id="main-view">
+
+  <!-- View tabs -->
+  <div class="view-tabs">
+    <div class="view-tab active" id="tab-dashboard" onclick="setView('dashboard')">DASHBOARD</div>
+    <div class="view-tab" id="tab-incentivos" onclick="setView('incentivos')">INCENTIVOS & METAS</div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert-strip" id="alert-strip">⚠️ <span id="alert-msg"></span></div>
+
+  <!-- ══ VIEW: DASHBOARD ══════════════════════════════════ -->
+  <div class="view active" id="view-dashboard">
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpis">
+      <div class="kpi c-red"  style="animation-delay:.04s">
+        <div class="kpi-icon">$</div>
+        <div class="kpi-label">Ventas Totales</div>
+        <div class="kpi-value" id="kv-ventas">$0</div>
+        <div class="kpi-trend"><span class="vs">vs ayer</span><span id="kt-ventas" class="vs">—</span></div>
+      </div>
+      <div class="kpi c-green" style="animation-delay:.08s">
+        <div class="kpi-icon">↗</div>
+        <div class="kpi-label">Margen Bruto</div>
+        <div class="kpi-value" id="kv-margen">$0</div>
+        <div class="kpi-trend"><span id="kt-margen" class="vs">—</span><span class="vs">margen %</span></div>
+      </div>
+      <div class="kpi c-gold" style="animation-delay:.12s">
+        <div class="kpi-icon">%</div>
+        <div class="kpi-label">Margen %</div>
+        <div class="kpi-value" id="kv-mpct">0%</div>
+        <div class="kpi-trend"><span class="vs">objetivo: 35%</span></div>
+      </div>
+      <div class="kpi c-blue" style="animation-delay:.16s">
+        <div class="kpi-icon">🛒</div>
+        <div class="kpi-label">Transacciones</div>
+        <div class="kpi-value" id="kv-txn">0</div>
+        <div class="kpi-trend"><span class="vs">unidades:</span><span id="kt-units" class="vs">0</span></div>
+      </div>
+      <div class="kpi c-purp" style="animation-delay:.20s">
+        <div class="kpi-icon">🎫</div>
+        <div class="kpi-label">Ticket Promedio</div>
+        <div class="kpi-value" id="kv-ticket">$0</div>
+        <div class="kpi-trend"><span class="vs">por transacción</span></div>
+      </div>
+    </div>
+
+    <!-- Charts row 1 -->
+    <div class="chart-grid">
+      <div class="card" style="animation-delay:.12s">
+        <div class="card-head">
+          <div class="card-title"><span class="dot red"></span>Ventas en el tiempo</div>
+          <div class="range-tabs" id="chart-range-tabs">
+            <div class="range-tab active" onclick="setChartRange('dia')">Día</div>
+            <div class="range-tab" onclick="setChartRange('mes')">Mes</div>
+            <div class="range-tab" onclick="setChartRange('ano')">Año</div>
+          </div>
+        </div>
+        <div class="card-body" style="height:220px"><canvas id="chart-ventas"></canvas></div>
+      </div>
+      <div class="card" style="animation-delay:.16s">
+        <div class="card-head"><div class="card-title"><span class="dot green"></span>Unitarias vs Promos</div></div>
+        <div class="card-body" style="height:220px;display:flex;align-items:center;justify-content:center">
+          <canvas id="chart-promo" style="max-width:200px;max-height:200px"></canvas>
+        </div>
+      </div>
+      <div class="card" style="animation-delay:.20s">
+        <div class="card-head"><div class="card-title"><span class="dot gold"></span>Por Producto</div></div>
+        <div class="card-body" style="height:220px;display:flex;align-items:center;justify-content:center">
+          <canvas id="chart-tipo" style="max-width:200px;max-height:200px"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts row 2 -->
+    <div class="chart-row2">
+      <div class="card" id="inventario" style="animation-delay:.14s">
+        <div class="card-head">
+          <div class="card-title"><span class="dot red"></span>Stock Disponible</div>
+          <div style="display:flex;gap:6px">
+            <span id="stock-crit" style="font-family:var(--fM);font-size:10px;color:var(--gld)"></span>
+            <button class="btn btn-sm btn-ghost" onclick="openModal('modal-inventario')">+ Stock</button>
+          </div>
+        </div>
+        <div class="stock-grid" id="stock-list"></div>
+      </div>
+      <div class="card" style="animation-delay:.18s">
+        <div class="card-head"><div class="card-title"><span class="dot gold"></span>Por Sede</div></div>
+        <div class="card-body"><div class="hbar-list" id="bars-sede"></div></div>
+      </div>
+      <div class="card" style="animation-delay:.22s">
+        <div class="card-head"><div class="card-title"><span class="dot green"></span>Resumen Financiero</div></div>
+        <div id="fin-grid"></div>
+      </div>
+    </div>
+
+    <!-- Row 3: vendedores + últimas ventas -->
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:10px;margin-bottom:16px" id="transacciones">
+      <div class="card" style="animation-delay:.20s">
+        <div class="card-head"><div class="card-title"><span class="dot blue"></span>Por Vendedor</div></div>
+        <div class="card-body"><div class="hbar-list" id="bars-vendedor"></div></div>
+      </div>
+      <div class="card" style="animation-delay:.24s">
+        <div class="card-head">
+          <div class="card-title"><span class="dot red"></span>Últimas Ventas</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select class="fsel" id="f-limit" style="min-width:80px" onchange="loadRecientes()">
+              <option value="20">20</option><option value="50">50</option><option value="100">100</option>
+            </select>
+            <button class="btn btn-sm btn-danger" onclick="openModal('modal-reversa')">↩ Reversa</button>
+            <button class="btn btn-sm btn-ghost" onclick="openModal('modal-admin-tx')">⚡ Admin Tx</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Hora</th><th>Sede</th><th>Tipo Tx</th><th>Producto</th>
+              <th>Cant</th><th>Total</th><th>Vendedor</th><th>Pago</th><th>Estado</th>
+            </tr></thead>
+            <tbody id="tbody-tx"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /view-dashboard -->
+
+  <!-- ══ VIEW: INCENTIVOS ══════════════════════════════════ -->
+  <div class="view" id="view-incentivos">
+
+    <div class="inc-hero">
+      <div class="inc-hero-label">Plan de motivación comercial · División Box</div>
+      <div class="inc-hero-title">INCENTIVOS &amp; METAS</div>
+      <div class="inc-hero-sub">Métricas de rendimiento · Bonos · Rankings en tiempo real</div>
+    </div>
+
+    <!-- Metas por vendedor -->
+    <div class="meta-card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-family:var(--fD);font-size:22px;letter-spacing:.04em;color:var(--cream)">PROGRESO DEL MES</div>
+        <span style="font-family:var(--fM);font-size:10px;color:var(--muted)" id="meta-periodo">—</span>
+      </div>
+      <div class="meta-grid" id="meta-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><div class="card-title"><span class="dot purp"></span>Ranking Vendedores</div></div>
+        <div id="ranking-list" class="card-body"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title"><span class="dot gold"></span>Oportunidades de Mejora</div></div>
+        <div id="oport-list" class="card-body"></div>
+      </div>
+    </div>
+
+    <!-- Incentivo cards -->
+    <div style="font-family:var(--fD);font-size:22px;letter-spacing:.04em;color:var(--cream);margin-bottom:12px">PROGRAMA DE BONOS</div>
+    <div class="inc-grid">
+      <div class="inc-card">
+        <div class="inc-top purp"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(204,68,255,.12)">🏆</div>
+          <div class="inc-name">BONO CAMPEÓN</div>
+          <div class="inc-type">Mensual · Individual</div>
+          <div class="inc-desc">El vendedor con más unidades al mes. El Dashboard genera el ranking automáticamente.</div>
+          <div class="inc-mechanic">🥇 1er lugar → <span class="hlg">+$15.000</span><br>🥈 2do lugar → <span class="hl">+$7.000</span><br>Tie-break: mayor Pack36</div>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-top gold"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(255,204,0,.1)">🎯</div>
+          <div class="inc-name">META PACK36</div>
+          <div class="inc-type">Semanal · Por vendedor</div>
+          <div class="inc-desc">Mayor margen del negocio. Cada Pack36 cerrado suma al bono mensual.</div>
+          <div class="inc-mechanic">Por Pack36 → <span class="hlg">+$1.000</span><br>2+ Pack36/semana → <span class="hlg">+$3.000 extra</span><br>Se acumula al bono mensual</div>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-top green"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(0,255,136,.08)">📈</div>
+          <div class="inc-name">SUPERACIÓN</div>
+          <div class="inc-type">Mensual · Comparativo</div>
+          <div class="inc-desc">Premia crecimiento vs mes anterior. Justo para todos los volúmenes.</div>
+          <div class="inc-mechanic">+20% vs ant. → <span class="hlg">+$8.000</span><br>+35% o más → <span class="hlg">+$15.000</span><br><span class="hlp">Auto-calculado en Dashboard</span></div>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-top red"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(255,10,20,.1)">⚡</div>
+          <div class="inc-name">DÍA EXPLOSIVO</div>
+          <div class="inc-type">Diario · Flash</div>
+          <div class="inc-desc">Superar meta en un solo día. Genera urgencia y enfoque.</div>
+          <div class="inc-mechanic">+$50k/día → <span class="hlg">+$5.000</span><br>+$80k/día → <span class="hlg">+$10.000</span><br><span class="hlr">Alerta automática Dashboard 🔥</span></div>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-top purp"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(204,68,255,.1)">👑</div>
+          <div class="inc-name">RANKING VISIBLE</div>
+          <div class="inc-type">En vivo · Psicología</div>
+          <div class="inc-desc">Dashboard muestra ranking en tiempo real. La competencia sana es el mejor motivador.</div>
+          <div class="inc-mechanic">🥇 <span class="hlp">1er lugar</span> — destacado<br>🥈 <span class="hl">2do</span> — visible equipo<br>Actualización cada hora</div>
+        </div>
+      </div>
+      <div class="inc-card">
+        <div class="inc-top green"></div>
+        <div class="inc-inner">
+          <div class="inc-icon-wrap" style="background:rgba(0,255,136,.08)">🤝</div>
+          <div class="inc-name">META SEDE</div>
+          <div class="inc-type">Mensual · Colaborativo</div>
+          <div class="inc-desc">Si la sede supera la meta del mes, todos los vendedores de esa sede ganan.</div>
+          <div class="inc-mechanic">Sede supera meta → <span class="hlg">+$10.000 c/u</span><br>Meta: <span class="hl">110% mes anterior</span><br>Filtrado automático por sede</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /view-incentivos -->
+
+</div><!-- /main -->
+
+
+<!-- ════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════ -->
+
+<!-- Reversa -->
+<div class="overlay" id="modal-reversa">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">↩ Reversa</span>
+      <button class="modal-close" onclick="closeModal('modal-reversa')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg"><span class="fl">Transaction ID original *</span>
+        <input class="fc" id="rev-txn" placeholder="TXN-XXXXXXXXXX" style="text-transform:uppercase"></div>
+      <div class="fg"><span class="fl">Motivo</span>
+        <input class="fc" id="rev-motivo" placeholder="Error de digitación / Devolución..."></div>
+      <div style="background:rgba(255,10,20,.06);border:1px solid rgba(255,10,20,.2);border-radius:var(--r);padding:10px 12px;font-family:var(--fM);font-size:10px;color:var(--muted)">
+        ⚠ No se elimina el registro original. Se crea una transacción inversa. El inventario se ajusta automáticamente.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-reversa')">Cancelar</button>
+      <button class="btn btn-danger" onclick="submitReversa()">Confirmar Reversa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Tx -->
+<div class="overlay" id="modal-admin-tx">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">⚡ Tx Admin</span>
+      <button class="modal-close" onclick="closeModal('modal-admin-tx')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg"><span class="fl">Tipo *</span>
+        <select class="fc" id="atx-tipo">
+          <option value="regalo">Regalía a vendedor</option>
+          <option value="perdida">Pérdida</option>
+          <option value="sorteo">Sorteo</option>
+        </select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg"><span class="fl">Sede *</span>
+          <select class="fc" id="atx-sede"><option>San Miguel</option><option>La Cisterna</option><option>Externo</option></select></div>
+        <div class="fg"><span class="fl">Vendedor</span>
+          <select class="fc" id="atx-vendedor"><option value="Admin">Admin</option><option>Angelo Alvarez</option><option>Karen</option><option>Xoly</option><option>Tito</option></select></div>
+        <div class="fg"><span class="fl">Producto *</span>
+          <select class="fc" id="atx-prod"><option value="SUERO">SUERO</option><option value="JUGO">JUGO</option></select></div>
+        <div class="fg"><span class="fl">Cantidad *</span>
+          <input class="fc" id="atx-qty" type="number" min="1" value="1"></div>
+      </div>
+      <div class="fg"><span class="fl">Observación</span>
+        <input class="fc" id="atx-obs" placeholder="Motivo..."></div>
+      <div style="background:var(--s2);border-radius:var(--r);padding:8px 12px;font-family:var(--fM);font-size:10px;color:var(--muted);margin-top:4px">
+        Se valoriza a precio costo. No impacta ingresos reales.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-admin-tx')">Cancelar</button>
+      <button class="btn btn-red" onclick="submitAdminTx()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Inventario -->
+<div class="overlay" id="modal-inventario">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">📦 Ingreso de Stock</span>
+      <button class="modal-close" onclick="closeModal('modal-inventario')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="fg"><span class="fl">Sede *</span>
+          <select class="fc" id="inv-sede"><option>San Miguel</option><option>La Cisterna</option></select></div>
+        <div class="fg"><span class="fl">Producto *</span>
+          <select class="fc" id="inv-prod"><option value="SUERO">SUERO</option><option value="JUGO">JUGO</option></select></div>
+        <div class="fg"><span class="fl">Cantidad *</span>
+          <input class="fc" id="inv-qty" type="number" min="1" value="90"></div>
+        <div class="fg"><span class="fl">Ubicación *</span>
+          <select class="fc" id="inv-ubic"><option value="visicooler">Visicooler</option><option value="bodega">Bodega</option></select></div>
+      </div>
+      <div class="fg"><span class="fl">Referencia</span>
+        <input class="fc" id="inv-ref" placeholder="N° factura, proveedor..."></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-inventario')">Cancelar</button>
+      <button class="btn btn-red" onclick="submitInventario()">Registrar Ingreso</button>
+    </div>
+  </div>
+</div>
+
+<!-- Email Report -->
+<div class="overlay" id="modal-email">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">✉ Email Report Mensual</span>
+      <button class="modal-close" onclick="closeModal('modal-email')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="email-info">
+        El reporte incluye:<br>
+        • Análisis de ventas del mes con KPIs completos<br>
+        • Comparativa vs mes anterior<br>
+        • Ranking de vendedores y comisiones calculadas<br>
+        • Stock crítico y oportunidades de reposición<br>
+        • Oportunidades de mejora identificadas por IA<br>
+        • Próximos objetivos recomendados
+      </div>
+      <div class="fg"><span class="fl">Destinatario *</span>
+        <input class="fc" id="email-to" type="email" placeholder="admin@divisionbox.cl"></div>
+      <div class="fg"><span class="fl">Período</span>
+        <input class="fc" id="email-mes" type="month"></div>
+      <div class="fg"><span class="fl">Notas adicionales</span>
+        <input class="fc" id="email-notas" placeholder="Contexto extra para el análisis..."></div>
+      <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-family:var(--fM);font-size:10px;color:var(--muted)">
+        💡 Requiere configurar el Apps Script con Gmail API habilitada. Ver <strong>DESPLIEGUE.md</strong> sección Email.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-email')">Cancelar</button>
+      <button class="btn btn-red" onclick="submitEmailReport()">Enviar Reporte</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+/* ================================================================
+   DIVISIÓN BOX — DASHBOARD v6.0 PRODUCTION
+   ✅ API REST (Apps Script)  ✅ Chart.js  ✅ Italy filter strip
+   ✅ Loyalty watermark       ✅ Incentivos view  ✅ Email report
+   ✅ Vivid glowing palette   ✅ KPIs animados    ✅ Export CSV
+================================================================ */
+
+// ── CONFIG ────────────────────────────────────────────────────
+const API_URL = localStorage.getItem('db_api_url') || '';
+
+// Inject brand assets (set these via backoffice or directly)
+const LOGO_B64   = localStorage.getItem('db_logo_b64') || '';
+const BANNER_B64 = localStorage.getItem('db_banner_b64') || '';
+if (LOGO_B64)   document.getElementById('nav-logo').src = LOGO_B64;
+if (BANNER_B64) document.getElementById('filter-banner').style.backgroundImage = `url('${BANNER_B64}')`;
+
+// ── CHART INSTANCES ───────────────────────────────────────────
+let chartVentas = null, chartPromo = null, chartTipo = null;
+
+// ── PALETTE (vivid) ───────────────────────────────────────────
+const CLR = {
+  red:'#ff0a14', green:'#00ff88', gold:'#ffcc00',
+  blue:'#00aaff', purp:'#cc44ff',
+};
+const SEDE_CLR = { 'San Miguel':CLR.red, 'La Cisterna':CLR.blue, 'Externo':CLR.gold };
+
+// ── UTILS ─────────────────────────────────────────────────────
+const fmt  = n => '$' + Math.round(n).toLocaleString('es-CL');
+const fmtN = n => Math.round(n).toLocaleString('es-CL');
+const cl   = (v,a,b) => Math.max(a,Math.min(b,v));
+const easeOut = t => 1-Math.pow(1-t,3);
+
+function animateVal(id, target, isMoney) {
+  const el = document.getElementById(id);
+  const t0 = performance.now(), dur = 900;
+  const step = t => {
+    const p = Math.min((t-t0)/dur,1), v = target*easeOut(p);
+    el.textContent = isMoney ? fmt(v) : fmtN(v);
+    if (p<1) requestAnimationFrame(step);
+    else el.textContent = isMoney ? fmt(target) : fmtN(target);
+  };
+  requestAnimationFrame(step);
+}
+
+// ── CLOCK ─────────────────────────────────────────────────────
+(function clock(){
+  const upd = () => document.getElementById('nav-time').textContent =
+    new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  upd(); setInterval(upd,1000);
+})();
+
+// ── VIEW SWITCHING ─────────────────────────────────────────────
+function setView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('tab-' + v).classList.add('active');
+  if (v === 'incentivos') renderIncentivosData();
+}
+
+// ── MODE TABS ─────────────────────────────────────────────────
+let currentMode = 'mes';
+function setMode(m) {
+  currentMode = m;
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    const map = {hoy:'Hoy',ayer:'Ayer','7d':'7D',mes:'Mes',rango:'Rango'};
+    t.classList.toggle('active', t.textContent === (map[m]||m));
+  });
+  const isRango = m === 'rango';
+  document.getElementById('grp-desde').style.display = isRango ? 'flex' : 'none';
+  document.getElementById('grp-hasta').style.display = isRango ? 'flex' : 'none';
+}
+
+function buildParams() {
+  const p = {
+    sede:      document.getElementById('f-sede').value,
+    vendedor:  document.getElementById('f-vendedor').value,
+    categoria: document.getElementById('f-categoria').value,
+  };
+  const hoy = new Date();
+  const iso  = d => d.toISOString().split('T')[0];
+  const add  = (d,n) => { const r=new Date(d); r.setDate(r.getDate()+n); return r; };
+  switch(currentMode) {
+    case 'hoy':  p.desde=iso(hoy); p.hasta=iso(hoy); break;
+    case 'ayer': p.desde=iso(add(hoy,-1)); p.hasta=iso(add(hoy,-1)); break;
+    case '7d':   p.desde=iso(add(hoy,-7)); p.hasta=iso(hoy); break;
+    case 'mes':  p.mes=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`; break;
+    case 'rango':p.desde=document.getElementById('f-desde').value; p.hasta=document.getElementById('f-hasta').value; break;
+  }
+  return p;
+}
+
+function applyFilters() { reload(); }
+
+// ── API ───────────────────────────────────────────────────────
+async function apiGet(resource, params={}) {
+  if (!API_URL) throw new Error('API no configurada. Ve a ⚙ Backoffice → Config API');
+  const url = new URL(API_URL);
+  url.searchParams.set('resource',resource);
+  Object.entries(params).forEach(([k,v]) => { if(v) url.searchParams.set(k,v); });
+  const r = await fetch(url.toString()), j = await r.json();
+  if (!j.ok) throw new Error(j.error||'API error');
+  return j.data;
+}
+
+async function apiPost(body) {
+  if (!API_URL) throw new Error('API no configurada');
+  const r = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error||'API error');
+  return j.data;
+}
+
+const genTxn = () => 'TXN-'+[...Array(10)].map(()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+
+// ── RELOAD ────────────────────────────────────────────────────
+async function reload() {
+  setRefresh(true);
+  try {
+    const params = buildParams();
+    await Promise.all([loadKPIs(params), loadRecientes(), loadStock()]);
+    document.getElementById('last-upd').textContent =
+      'Actualizado ' + new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  } catch(err) {
+    toast('Error: ' + err.message, true);
+  } finally {
+    setRefresh(false);
+  }
+}
+
+function setRefresh(v) {
+  document.getElementById('btn-refresh').classList.toggle('spin',v);
+}
+
+// ── KPIs ──────────────────────────────────────────────────────
+async function loadKPIs(params) {
+  const data = await apiGet('dashboard_kpis', params);
+  const tv=data.total_ventas||0, tc=data.total_costo||0, mb=data.margen_bruto||0;
+  const txn=data.num_transacciones||0, unt=data.total_unidades||0;
+  const tkt=txn>0?tv/txn:0, mp=tv>0?mb/tv*100:0;
+
+  animateVal('kv-ventas',tv,true);
+  animateVal('kv-margen',mb,true);
+  animateVal('kv-txn',txn,false);
+  animateVal('kv-ticket',tkt,true);
+  document.getElementById('kv-mpct').textContent = mp.toFixed(1)+'%';
+  document.getElementById('kt-margen').textContent = mp.toFixed(1)+'%';
+  document.getElementById('kt-margen').className   = mp>=30?'up':'dn';
+  document.getElementById('kt-units').textContent  = fmtN(unt);
+
+  renderChartVentas(data.ventas_por_periodo||{}, data.agrupacion||'dia');
+  renderHBars('bars-sede',    data.por_sede||{},     tv, SEDE_CLR);
+  renderHBars('bars-vendedor',data.por_vendedor||{}, tv, null);
+  renderFinancial(tv,tc,mb,txn,unt,tkt);
+  renderDonutPromo(data);
+  renderDonutTipo(data);
+}
+
+// ── CHARTS ────────────────────────────────────────────────────
+const ChartDefaults = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#111', borderColor:'#333', borderWidth:1, titleColor:'#888', bodyColor:'#ccc' }},
+  scales:{ x:{ ticks:{color:'#555',font:{family:'JetBrains Mono',size:10},maxTicksLimit:12,maxRotation:0}, grid:{color:'rgba(255,255,255,.04)'} }, y:{ ticks:{color:'#555',font:{family:'JetBrains Mono',size:10},callback:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1000?'$'+(v/1000).toFixed(0)+'k':'$'+v}, grid:{color:'rgba(255,255,255,.04)'} }}
+};
+
+let chartRange = 'dia';
+function setChartRange(r) {
+  chartRange=r;
+  document.querySelectorAll('#chart-range-tabs .range-tab').forEach(t=>{
+    const m={dia:'Día',mes:'Mes',ano:'Año'};
+    t.classList.toggle('active', t.textContent===m[r]);
+  });
+  reload();
+}
+
+function renderChartVentas(datos, agrupacion) {
+  const labels = Object.keys(datos).sort();
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fmtL = l => {
+    if (agrupacion==='dia') { try{const d=new Date(l+'T12:00:00'); return d.getDate()+' '+meses[d.getMonth()]}catch{return l} }
+    if (agrupacion==='mes') { const[y,m]=l.split('-'); return meses[+m-1]+' '+y.slice(2) }
+    return l;
+  };
+  if (chartVentas) chartVentas.destroy();
+  const ctx = document.getElementById('chart-ventas').getContext('2d');
+  const isLine = agrupacion==='dia';
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0,0,0,220);
+  grad.addColorStop(0,'rgba(255,10,20,.18)'); grad.addColorStop(1,'rgba(255,10,20,0)');
+  chartVentas = new Chart(ctx,{
+    type: isLine?'line':'bar',
+    data:{ labels:labels.map(fmtL), datasets:[{
+      label:'Ventas', data:labels.map(k=>datos[k]),
+      borderColor:CLR.red, backgroundColor:isLine?grad:'rgba(255,10,20,.5)',
+      borderWidth:isLine?2:1, pointRadius:isLine?3:0,
+      pointBackgroundColor:CLR.red, tension:.35, fill:isLine,
+      borderRadius:isLine?0:4,
+      pointHoverRadius:5, pointHoverBackgroundColor:'#fff',
+    }]},
+    options:{...ChartDefaults, maintainAspectRatio:false}
+  });
+}
+
+function renderDonutPromo(data) {
+  const tv=data.total_ventas||0, promo=data.ventas_promo||0, unit=tv-promo;
+  if (chartPromo) chartPromo.destroy();
+  const ctx=document.getElementById('chart-promo').getContext('2d');
+  chartPromo = new Chart(ctx,{type:'doughnut',data:{
+    labels:['Unitarias','Promociones'],
+    datasets:[{data:[unit,promo],backgroundColor:[CLR.green,CLR.red],borderColor:'#0c0c0c',borderWidth:3,hoverOffset:6}]
+  },options:{responsive:true,maintainAspectRatio:true,cutout:'65%',
+    plugins:{legend:{position:'bottom',labels:{color:'#555',font:{family:'JetBrains Mono',size:10},padding:12,boxWidth:10}},
+    tooltip:{callbacks:{label:c=>` ${fmt(c.raw)} (${tv>0?((c.raw/tv)*100).toFixed(1):0}%)`}}}}
+  });
+}
+
+function renderDonutTipo(data) {
+  const bt=data.por_tipo||{};
+  const labels=Object.keys(bt), vals=labels.map(k=>bt[k]);
+  const colors=[CLR.red,CLR.blue,CLR.gold,CLR.green,CLR.purp];
+  if (chartTipo) chartTipo.destroy();
+  const ctx=document.getElementById('chart-tipo').getContext('2d');
+  chartTipo = new Chart(ctx,{type:'doughnut',data:{
+    labels, datasets:[{data:vals,backgroundColor:colors.slice(0,labels.length),borderColor:'#0c0c0c',borderWidth:3,hoverOffset:6}]
+  },options:{responsive:true,maintainAspectRatio:true,cutout:'65%',
+    plugins:{legend:{position:'bottom',labels:{color:'#555',font:{family:'JetBrains Mono',size:10},padding:10,boxWidth:10}},
+    tooltip:{callbacks:{label:c=>` ${fmt(c.raw)}`}}}}
+  });
+}
+
+// ── HORIZONTAL BARS ───────────────────────────────────────────
+function renderHBars(cid, data, total, colorMap) {
+  const el=document.getElementById(cid);
+  const entries=Object.entries(data).sort((a,b)=>b[1].ventas-a[1].ventas);
+  const palette=[CLR.red,CLR.blue,CLR.gold,CLR.green,CLR.purp];
+  if (!entries.length){el.innerHTML='<div class="empty">Sin datos</div>';return}
+  let i=0;
+  el.innerHTML=entries.map(([name,vals])=>{
+    const w=total>0?cl(vals.ventas/total*100,0,100).toFixed(1):0;
+    const color=colorMap?(colorMap[name]||palette[i%palette.length]):palette[i%palette.length];
+    i++;
+    return `<div class="hbar-item">
+      <div class="hbar-name" title="${name}">${name}</div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:0%;background:${color};box-shadow:0 0 8px ${color}" data-w="${w}"></div></div>
+      <div class="hbar-val">${fmt(vals.ventas||0)}</div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{el.querySelectorAll('.hbar-fill').forEach(b=>b.style.width=b.dataset.w+'%')},60);
+}
+
+// ── FINANCIAL SUMMARY ─────────────────────────────────────────
+function renderFinancial(tv,tc,mb,txn,unt,tkt) {
+  document.getElementById('fin-grid').innerHTML=`
+    <div class="fin-row"><span class="fin-label">Ventas brutas</span><span class="fin-val">${fmt(tv)}</span></div>
+    <div class="fin-row"><span class="fin-label">Costo mercadería</span><span class="fin-val neg">-${fmt(tc)}</span></div>
+    <div class="fin-row total"><span class="fin-label">Margen bruto</span><span class="fin-val pos">${fmt(mb)}</span></div>
+    <div class="fin-row"><span class="fin-label">Transacciones</span><span class="fin-val">${fmtN(txn)}</span></div>
+    <div class="fin-row"><span class="fin-label">Unidades vendidas</span><span class="fin-val">${fmtN(unt)}</span></div>
+    <div class="fin-row"><span class="fin-label">Ticket promedio</span><span class="fin-val gold">${fmt(tkt)}</span></div>
+  `;
+}
+
+// ── TRANSACCIONES ─────────────────────────────────────────────
+async function loadRecientes() {
+  const limit=document.getElementById('f-limit').value;
+  const params=buildParams();
+  try {
+    let rows=await apiGet('ventas',params);
+    rows=rows.slice(-Number(limit)).reverse();
+    renderTxTable(rows);
+  } catch(err) {
+    document.getElementById('tbody-tx').innerHTML=`<tr><td colspan="9" class="empty">Error: ${err.message}</td></tr>`;
+  }
+}
+
+function renderTxTable(rows) {
+  const tb=document.getElementById('tbody-tx');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="9" class="empty">Sin registros</td></tr>';return}
+  const tipoTag=t=>{
+    const m={venta:'t-green',reversa:'t-red',regalo:'t-gold',perdida:'t-red',sorteo:'t-blue'};
+    return `<span class="tag ${m[t]||'t-gray'}">${t}</span>`;
+  };
+  const metTag=m=>m==='Transferencia'?'<span class="tag t-blue">TR</span>':'<span class="tag t-green">EF</span>';
+  tb.innerHTML=rows.map(r=>{
+    const rev=r.estado==='reversado';
+    let fecha=r.fecha||'';
+    if(!fecha&&r.fecha_iso){try{fecha=new Date(r.fecha_iso).toLocaleDateString('es-CL')}catch{}}
+    return `<tr style="${rev?'opacity:.4;text-decoration:line-through':''}">
+      <td class="td-mono td-muted">${r.hora||fecha||'—'}</td>
+      <td>${r.sede||'—'}</td>
+      <td>${tipoTag(r.tipo_transaccion||'venta')}</td>
+      <td class="td-mono">${r.producto1_tipo||'—'}${r.producto2_tipo?'+'+r.producto2_tipo:''}</td>
+      <td style="text-align:center">${(r.producto1_qty||0)+(r.producto2_qty||0)}</td>
+      <td class="td-mono" style="color:var(--cream);font-weight:500">${fmt(r.total_venta||0)}</td>
+      <td>${r.vendedor||'—'}</td>
+      <td>${metTag(r.metodo_pago||'')}</td>
+      <td><span class="tag ${rev?'t-red':'t-gray'}">${r.estado||'activo'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── STOCK ─────────────────────────────────────────────────────
+async function loadStock() {
+  try {
+    const movs=await apiGet('inventario');
+    const map={};
+    movs.forEach(m=>{const k=`${m.sede}|${m.producto}`;map[k]={sede:m.sede,producto:m.producto,stock:Number(m.stock_actual)||0}});
+    const items=Object.values(map), crits=items.filter(i=>i.stock<20).length;
+    document.getElementById('stock-crit').textContent=crits>0?`⚠ ${crits} crítico${crits>1?'s':''}`:'';
+    const alertEl=document.getElementById('alert-strip'), alertMsg=document.getElementById('alert-msg');
+    const critItems=items.filter(i=>i.stock<20);
+    if(critItems.length){alertMsg.textContent='Stock crítico: '+critItems.map(c=>`${c.sede} ${c.producto} (${c.stock} uds)`).join(' · ');alertEl.classList.add('show');}
+    else alertEl.classList.remove('show');
+    const CAP=90, list=document.getElementById('stock-list');
+    if(!items.length){list.innerHTML='<div class="empty" style="padding:16px">Sin datos de inventario</div>';return}
+    list.innerHTML=items.sort((a,b)=>a.stock-b.stock).map(item=>{
+      const cls=item.stock>=30?'ok':item.stock>=10?'warn':'crit';
+      const led=item.stock>=30?CLR.green:item.stock>=10?CLR.gold:CLR.red;
+      return `<div class="stock-row">
+        <div class="stock-left">
+          <div class="stock-led" style="background:${led};box-shadow:0 0 8px ${led}"></div>
+          <div><div class="stock-sede">${item.sede}</div><div class="stock-prod">${item.producto} · ${Math.min(item.stock/CAP*100,100).toFixed(0)}% cap</div></div>
+        </div>
+        <div><div class="stock-num ${cls}">${item.stock}</div><div class="stock-cap">/ ${CAP}</div></div>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    document.getElementById('stock-list').innerHTML=`<div class="empty">Error: ${err.message}</div>`;
+  }
+}
+
+// ── INCENTIVOS DATA ───────────────────────────────────────────
+async function renderIncentivosData() {
+  const hoy=new Date();
+  const mes=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('meta-periodo').textContent=
+    hoy.toLocaleDateString('es-CL',{month:'long',year:'numeric'}).toUpperCase();
+
+  // Fetch vendedor data for the month
+  let kpis={por_vendedor:{},total_ventas:0};
+  try { kpis=await apiGet('dashboard_kpis',{mes}); } catch{}
+
+  const vendedores=['Angelo Alvarez','Karen','Xoly','Tito'];
+  const META_MES=150000; // meta mensual por vendedor
+  const colors=[CLR.purp,CLR.gold,CLR.green,CLR.blue];
+
+  // Meta grid
+  document.getElementById('meta-grid').innerHTML=vendedores.map((v,i)=>{
+    const vData=kpis.por_vendedor?.[v]||{ventas:0};
+    const pct=Math.min(vData.ventas/META_MES*100,100).toFixed(0);
+    const color=colors[i%colors.length];
+    return `<div class="meta-item">
+      <div class="meta-pct" style="color:${color}">${pct}%</div>
+      <div class="meta-name">${v}</div>
+      <div class="meta-progress-track">
+        <div class="meta-progress-fill" style="width:0%;background:${color};box-shadow:0 0 8px ${color}" data-w="${pct}"></div>
+      </div>
+      <div class="meta-nums">
+        <span>${fmt(vData.ventas||0)}</span>
+        <span class="meta-target">${fmt(META_MES)} meta</span>
+      </div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>{
+    document.querySelectorAll('.meta-progress-fill').forEach(b=>b.style.width=b.dataset.w+'%');
+  },100);
+
+  // Ranking
+  const sorted=Object.entries(kpis.por_vendedor||{}).sort((a,b)=>b[1].ventas-a[1].ventas);
+  const medals=['🥇','🥈','🥉','4️⃣'];
+  document.getElementById('ranking-list').innerHTML=sorted.length?
+    sorted.map(([name,v],i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)">
+        <div style="font-size:22px;width:30px">${medals[i]||'▪'}</div>
+        <div style="flex:1">
+          <div style="font-family:var(--fB);font-weight:600;color:var(--cream)">${name}</div>
+          <div style="font-family:var(--fM);font-size:10px;color:var(--muted)">${fmtN(v.unidades||0)} unidades</div>
+        </div>
+        <div style="font-family:var(--fM);font-size:14px;font-weight:500;color:var(--grn)">${fmt(v.ventas||0)}</div>
+      </div>`).join('')
+    :'<div class="empty">Sin datos del período</div>';
+
+  // Oportunidades de mejora (análisis estático inteligente)
+  const totalVentas=kpis.total_ventas||0;
+  const oports=[];
+  if(totalVentas<META_MES*vendedores.length*0.7) oports.push({icon:'📉',texto:'Ventas por debajo del 70% de la meta grupal',accion:'Reforzar oferta de Pack6 en horario pico'});
+  if((kpis.margen_bruto||0)<(totalVentas*0.3)) oports.push({icon:'⚠️',texto:'Margen bruto bajo el 30% objetivo',accion:'Reducir regalías y auditar pérdidas'});
+  oports.push({icon:'🎯',texto:'Oportunidad: promover Pack36 activamente',accion:'Pack36 tiene 18% más margen que unitarios'});
+  oports.push({icon:'💡',texto:'Horario de mayor venta: 18:00–20:00',accion:'Asegurar stock full en visicooler a las 17:00'});
+
+  document.getElementById('oport-list').innerHTML=oports.map(o=>`
+    <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)">
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <span style="font-size:16px">${o.icon}</span>
+        <span style="font-family:var(--fB);font-size:12px;color:var(--text)">${o.texto}</span>
+      </div>
+      <div style="font-family:var(--fM);font-size:10px;color:var(--gold);margin-left:24px">→ ${o.accion}</div>
+    </div>`).join('');
+}
+
+// ── MODAL ACTIONS ─────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+
+async function submitReversa() {
+  const txnOrig=document.getElementById('rev-txn').value.trim().toUpperCase();
+  const motivo=document.getElementById('rev-motivo').value.trim();
+  if(!txnOrig){toast('Ingresa el Transaction ID',true);return}
+  if(!confirm(`¿Confirmar reversa de ${txnOrig}?`))return;
+  try {
+    await apiPost({action:'reversa_venta',transaction_id:genTxn(),transaction_id_original:txnOrig,motivo});
+    closeModal('modal-reversa'); document.getElementById('rev-txn').value='';
+    toast('✓ Reversa aplicada: '+txnOrig); reload();
+  } catch(err){toast('Error: '+err.message,true)}
+}
+
+async function submitAdminTx() {
+  const qty=Number(document.getElementById('atx-qty').value);
+  if(!qty||qty<1){toast('Cantidad inválida',true);return}
+  try {
+    await apiPost({action:'admin_tipo_tx',transaction_id:genTxn(),
+      tipo_transaccion:document.getElementById('atx-tipo').value,
+      sede:document.getElementById('atx-sede').value,
+      vendedor:document.getElementById('atx-vendedor').value,
+      cliente:document.getElementById('atx-obs').value,
+      producto1_tipo:document.getElementById('atx-prod').value,
+      producto1_qty:qty});
+    closeModal('modal-admin-tx'); toast('✓ Transacción registrada'); reload();
+  } catch(err){toast('Error: '+err.message,true)}
+}
+
+async function submitInventario() {
+  const qty=Number(document.getElementById('inv-qty').value);
+  if(!qty||qty<1){toast('Cantidad inválida',true);return}
+  try {
+    await apiPost({action:'registrar_inventario',
+      sede:document.getElementById('inv-sede').value,
+      producto:document.getElementById('inv-prod').value,
+      cantidad:qty,
+      ubicacion:document.getElementById('inv-ubic').value,
+      referencia:document.getElementById('inv-ref').value});
+    closeModal('modal-inventario'); toast('✓ Stock actualizado: +'+qty); reload();
+  } catch(err){toast('Error: '+err.message,true)}
+}
+
+async function submitEmailReport() {
+  const to=document.getElementById('email-to').value.trim();
+  const mes=document.getElementById('email-mes').value;
+  const notas=document.getElementById('email-notas').value.trim();
+  if(!to){toast('Ingresa un email',true);return}
+  try {
+    await apiPost({action:'enviar_reporte_email',destinatario:to,periodo:mes,notas});
+    closeModal('modal-email'); toast('✓ Reporte enviado a '+to);
+  } catch(err){
+    // If API doesn't have this action yet, show instructions
+    toast('Configure Gmail API en Apps Script (ver DESPLIEGUE.md)',true);
+  }
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────
+async function exportCSV() {
+  try {
+    const rows=await apiGet('ventas',buildParams());
+    if(!rows.length){toast('Sin datos',true);return}
+    const headers=Object.keys(rows[0]);
+    const csv=[headers.join(','),...rows.map(r=>headers.map(h=>JSON.stringify(r[h]??'')).join(','))].join('\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download=`DivisionBox_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click(); toast('✓ CSV exportado');
+  } catch(err){toast('Error: '+err.message,true)}
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+let tT;
+function toast(msg,isErr=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=isErr?'show err':'show';
+  clearTimeout(tT); tT=setTimeout(()=>t.className='',3500);
+}
+
+// ── KEYBOARD ─────────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+  if((e.ctrlKey||e.metaKey)&&e.key==='r'){e.preventDefault();reload()}
+});
+
+// ── INIT ──────────────────────────────────────────────────────
+(function init(){
+  const hoy=new Date();
+  const mes=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+  const hace30=new Date(hoy); hace30.setDate(hoy.getDate()-30);
+  document.getElementById('f-desde').value=hace30.toISOString().split('T')[0];
+  document.getElementById('f-hasta').value=hoy.toISOString().split('T')[0];
+  document.getElementById('email-mes').value=mes;
+  setMode('mes');
+  if(!API_URL){toast('⚠ Configura la URL del API en Backoffice → Config API',true);return}
+  reload();
+  setInterval(reload, 5*60*1000);
+})();
+</script>
+</body>
+</html>
